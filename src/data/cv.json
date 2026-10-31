@@ -1,0 +1,126 @@
+{
+  "profile": {
+    "name": "Rahuldev Muthamsetty",
+    "title": "Technology Project Builder",
+    "tagline": "Turning ideas into products with code, creativity and AI.",
+    "institution": "Presidency University · Bengaluru, India",
+    "quote": "Build. Learn. Improve. Repeat.",
+    "location": "India · Open to international opportunities and relocation",
+    "email": "rahulmuthamsetty5677@gmail.com",
+    "linkedin": "linkedin.com/in/rahul-dev-57976a3b0",
+    "linkedinUrl": "https://linkedin.com/in/rahul-dev-57976a3b0",
+    "summary": "Electronics and Communication Engineering student focused on technology product development, AI-assisted workflows and digital platforms. Builds practical systems across real-time financial analytics, hyperlocal discovery and creator marketing. Combines backend understanding, system design, rapid learning and a product mindset to turn concepts into functional solutions.",
+    "roles": [
+      { "title": "Product Associate", "description": "Translate user needs into product requirements, feature plans and execution." },
+      { "title": "Junior Python / Backend Developer", "description": "Build backend systems, APIs and real-time data workflows." }
+    ],
+    "competencies": [
+      "Product thinking",
+      "Python/backend development",
+      "AI-assisted development",
+      "System design",
+      "Project execution",
+      "Team collaboration"
+    ],
+    "languages": [
+      { "name": "Telugu", "level": "Native" },
+      { "name": "Hindi", "level": "Fluent" },
+      { "name": "English", "level": "Conversational" }
+    ],
+    "fit": [
+      "Ships practical projects",
+      "Learns quickly",
+      "Product-minded with a technical foundation",
+      "Collaborative and adaptable"
+    ]
+  },
+  "menuSections": [
+    { "id": "about", "label": "ABOUT", "caption": "Who I am", "count": "21 profile cards", "teaser": ["Introduction", "Target roles", "Core competencies", "Languages", "Contact"] },
+    { "id": "projects", "label": "PROJECTS", "caption": "What I build", "count": "5 projects", "teaser": ["X BOT", "CribCrew", "BrandXBridge", "Video Reconstruction (VAE)", "Streetlight Monitoring"] },
+    { "id": "education", "label": "EDUCATION", "caption": "Where I learn", "count": "2 programs", "teaser": ["Presidency University", "Indian Startup School"] },
+    { "id": "skills", "label": "SKILLS", "caption": "What I work with", "count": "25 skills", "teaser": ["Backend & systems", "Frontend", "Tools & approach", "Product & leadership"] },
+    { "id": "assets", "label": "ASSETS", "caption": "The full archive", "count": "51 cards", "teaser": ["51 cards", "Projects", "Skills", "Profile"] }
+  ],
+  "featuredProjects": [
+    { "title": "X BOT", "subtitle": "AI-Powered Intraday Trading Analysis", "tags": "Python · FastAPI · WebSockets · Protocol Buffers", "description": "Built a modular system with 18 analytical engines, order-flow signals and Upstox real-time data. Added paper trading, confidence scoring, trade memory, Telegram alerts and monitoring." },
+    { "title": "CribCrew", "subtitle": "Hyperlocal Social Discovery", "tags": "Product design · Community · Social tech", "description": "Designed local discovery for discussions, events and venues, with feed/explore flows, reviews, interest-based clubs, meetups and location-based gamification." },
+    { "title": "BrandXBridge", "subtitle": "Creator Marketing Platform", "tags": "Creator economy · Marketing · Campaigns", "description": "Designed a performance-focused platform connecting brands and creators, including campaign workflows, incentive structures and creator matching." }
+  ],
+  "finalYearProjects": [
+    { "title": "Efficient Video Reconstruction Using VAE for Compressive Sensing", "subtitle": "Final-year project", "tags": "Python · Compressive sensing · Neural networks · Autoencoders", "description": "Developing a Python compressive-sensing algorithm with neural-network/autoencoder techniques to reconstruct video from fewer measurements.", "realWorldValue": "More bandwidth-efficient streaming and video processing on resource-constrained devices." },
+    { "title": "Centralized Streetlight Fault Detection & Location Tracking", "subtitle": "Final-year project", "tags": "ESP32 · LDR/IR sensors · GSM alerts", "description": "ESP32, LDR/IR sensors and GSM alerts monitor light status, adjust brightness to vehicle presence and report faults.", "realWorldValue": "Energy savings, safer streets and faster smart-city maintenance." }
+  ],
+  "education": [
+    { "institution": "Presidency University", "meta": "Bengaluru, India", "qualification": "B.Tech, Electronics and Communication Engineering (ECE)", "description": "Core Electronics, Signal Processing, Communication Systems, Embedded Logic." },
+    { "institution": "Indian Startup School (ISS)", "meta": "2026", "qualification": "Startup Accelerator Program", "description": "Venture building, product-market fit, business execution and growth strategy." }
+  ],
+  "skillGroups": [
+    { "label": "Backend & systems", "items": ["Python", "FastAPI", "REST APIs", "WebSockets", "Protocol Buffers", "SQLite", "C/C++"] },
+    { "label": "Frontend", "items": ["React.js", "TypeScript", "Analytics dashboards", "System monitoring", "Event-driven systems"] },
+    { "label": "Tools & approach", "items": ["Git", "Docker", "VS Code", "PostgreSQL", "Open-source integration", "AI-assisted development", "Rapid prototyping"] },
+    { "label": "Product & leadership", "items": ["Roadmapping", "GTM strategy", "Project ownership", "Team planning", "Adaptability", "Communication"] }
+  ],
+  "assets": [
+    { "id": "x-bot", "cat": "projects", "icon": "zap", "title": "X BOT", "subtitle": "AI-Powered Intraday Trading Analysis", "period": "Featured technology project", "summary": "Built a modular system with 18 analytical engines, order-flow signals and Upstox real-time data. Added paper trading, confidence scoring, trade memory, Telegram alerts and monitoring.", "tags": ["Python", "FastAPI", "WebSockets", "Protocol Buffers"], "details": ["Built a modular system with 18 analytical engines, order-flow signals and Upstox real-time data. Added paper trading, confidence scoring, trade memory, Telegram alerts and monitoring."] },
+    { "id": "cribcrew", "cat": "projects", "icon": "users", "title": "CRIBCREW", "subtitle": "Hyperlocal Social Discovery", "period": "Featured technology project", "summary": "Designed local discovery for discussions, events and venues, with feed/explore flows, reviews, interest-based clubs, meetups and location-based gamification.", "tags": ["Product design", "Community", "Social tech"], "details": ["Designed local discovery for discussions, events and venues, with feed/explore flows, reviews, interest-based clubs, meetups and location-based gamification."] },
+    { "id": "brandxbridge", "cat": "projects", "icon": "send", "title": "BRANDXBRIDGE", "subtitle": "Creator Marketing Platform", "period": "Featured technology project", "summary": "Designed a performance-focused platform connecting brands and creators, including campaign workflows, incentive structures and creator matching.", "tags": ["Creator economy", "Marketing", "Campaigns"], "details": ["Designed a performance-focused platform connecting brands and creators, including campaign workflows, incentive structures and creator matching."] },
+    { "id": "video-reconstruction-vae", "cat": "projects", "icon": "video", "title": "VIDEO RECONSTRUCTION", "subtitle": "VAE for Compressive Sensing", "period": "Final-year project", "summary": "Developing a Python compressive-sensing algorithm with neural-network/autoencoder techniques to reconstruct video from fewer measurements.", "tags": ["Python", "Compressive sensing", "Autoencoders"], "details": ["Developing a Python compressive-sensing algorithm with neural-network/autoencoder techniques to reconstruct video from fewer measurements.", "Real-world value: More bandwidth-efficient streaming and video processing on resource-constrained devices."] },
+    { "id": "streetlight-monitoring", "cat": "projects", "icon": "radio", "title": "STREETLIGHT MONITORING", "subtitle": "Fault Detection & Location Tracking", "period": "Final-year project", "summary": "ESP32, LDR/IR sensors and GSM alerts monitor light status, adjust brightness to vehicle presence and report faults.", "tags": ["ESP32", "LDR/IR", "GSM"], "details": ["ESP32, LDR/IR sensors and GSM alerts monitor light status, adjust brightness to vehicle presence and report faults.", "Real-world value: Energy savings, safer streets and faster smart-city maintenance."] },
+    { "id": "competency-1", "cat": "profile", "icon": "target", "title": "PRODUCT THINKING", "subtitle": "Core competency", "period": "Profile", "summary": "Listed under core competencies in my CV.", "tags": ["Core competency"], "details": ["Listed under core competencies in my CV.", "Product thinking · Python/backend development · AI-assisted development · System design · Project execution · Team collaboration"] },
+    { "id": "competency-2", "cat": "profile", "icon": "target", "title": "PYTHON / BACKEND DEVELOPMENT", "subtitle": "Core competency", "period": "Profile", "summary": "Listed under core competencies in my CV.", "tags": ["Core competency"], "details": ["Listed under core competencies in my CV.", "Product thinking · Python/backend development · AI-assisted development · System design · Project execution · Team collaboration"] },
+    { "id": "competency-3", "cat": "profile", "icon": "target", "title": "SYSTEM DESIGN", "subtitle": "Core competency", "period": "Profile", "summary": "Listed under core competencies in my CV.", "tags": ["Core competency"], "details": ["Listed under core competencies in my CV.", "Product thinking · Python/backend development · AI-assisted development · System design · Project execution · Team collaboration"] },
+    { "id": "competency-4", "cat": "profile", "icon": "target", "title": "PROJECT EXECUTION", "subtitle": "Core competency", "period": "Profile", "summary": "Listed under core competencies in my CV.", "tags": ["Core competency"], "details": ["Listed under core competencies in my CV.", "Product thinking · Python/backend development · AI-assisted development · System design · Project execution · Team collaboration"] },
+    { "id": "competency-5", "cat": "profile", "icon": "target", "title": "TEAM COLLABORATION", "subtitle": "Core competency", "period": "Profile", "summary": "Listed under core competencies in my CV.", "tags": ["Core competency"], "details": ["Listed under core competencies in my CV.", "Product thinking · Python/backend development · AI-assisted development · System design · Project execution · Team collaboration"] },
+    { "id": "language-telugu", "cat": "profile", "icon": "user", "title": "TELUGU", "subtitle": "Native", "period": "Profile", "summary": "Native language proficiency.", "tags": ["Language"], "details": ["Native language proficiency."] },
+    { "id": "language-hindi", "cat": "profile", "icon": "user", "title": "HINDI", "subtitle": "Fluent", "period": "Profile", "summary": "Fluent language proficiency.", "tags": ["Language"], "details": ["Fluent language proficiency."] },
+    { "id": "language-english", "cat": "profile", "icon": "user", "title": "ENGLISH", "subtitle": "Conversational", "period": "Profile", "summary": "Conversational language proficiency.", "tags": ["Language"], "details": ["Conversational language proficiency."] },
+    { "id": "fit-1", "cat": "profile", "icon": "zap", "title": "SHIPS PRACTICAL PROJECTS", "subtitle": "Fit", "period": "Profile", "summary": "Builds working systems that solve real problems.", "tags": ["Fit"], "details": ["Ships practical projects · Learns quickly · Product-minded with a technical foundation · Collaborative and adaptable"] },
+    { "id": "fit-2", "cat": "profile", "icon": "zap", "title": "LEARNS QUICKLY", "subtitle": "Fit", "period": "Profile", "summary": "Rapidly picks up new technologies and domains.", "tags": ["Fit"], "details": ["Ships practical projects · Learns quickly · Product-minded with a technical foundation · Collaborative and adaptable"] },
+    { "id": "fit-3", "cat": "profile", "icon": "zap", "title": "PRODUCT-MINDED", "subtitle": "Fit", "period": "Profile", "summary": "Combines technical foundation with product thinking.", "tags": ["Fit"], "details": ["Ships practical projects · Learns quickly · Product-minded with a technical foundation · Collaborative and adaptable"] },
+    { "id": "fit-4", "cat": "profile", "icon": "zap", "title": "COLLABORATIVE", "subtitle": "Fit", "period": "Profile", "summary": "Works well in teams and adapts to changing needs.", "tags": ["Fit"], "details": ["Ships practical projects · Learns quickly · Product-minded with a technical foundation · Collaborative and adaptable"] },
+    { "id": "quote-card", "cat": "profile", "icon": "zap", "title": "BUILD. LEARN. IMPROVE. REPEAT.", "subtitle": "The working principle", "period": "Profile", "summary": "“Build. Learn. Improve. Repeat.”", "tags": ["Quote"], "details": ["“Build. Learn. Improve. Repeat.”"] },
+    { "id": "presidency-university", "cat": "profile", "icon": "cap", "title": "PRESIDENCY UNIVERSITY", "subtitle": "B.Tech, ECE", "period": "Education", "summary": "Core Electronics, Signal Processing, Communication Systems, Embedded Logic.", "tags": ["Bengaluru, India", "B.Tech", "ECE"], "details": ["B.Tech, Electronics and Communication Engineering (ECE)", "Core Electronics, Signal Processing, Communication Systems, Embedded Logic."] },
+    { "id": "indian-startup-school", "cat": "profile", "icon": "zap", "title": "INDIAN STARTUP SCHOOL", "subtitle": "Startup Accelerator Program", "period": "2026", "summary": "Venture building, product-market fit, business execution and growth strategy.", "tags": ["ISS", "2026"], "details": ["Startup Accelerator Program", "Venture building, product-market fit, business execution and growth strategy."] },
+    { "id": "product-associate", "cat": "profile", "icon": "briefcase", "title": "PRODUCT ASSOCIATE", "subtitle": "Target role", "period": "Target role", "summary": "Translate user needs into product requirements, feature plans and execution.", "tags": ["Product", "Requirements", "Execution"], "details": ["Translate user needs into product requirements, feature plans and execution."] },
+    { "id": "junior-backend-developer", "cat": "profile", "icon": "briefcase", "title": "JUNIOR PYTHON / BACKEND DEVELOPER", "subtitle": "Target role", "period": "Target role", "summary": "Build backend systems, APIs and real-time data workflows.", "tags": ["Python", "Backend", "APIs"], "details": ["Build backend systems, APIs and real-time data workflows."] },
+    { "id": "skill-python", "cat": "skills", "icon": "cpu", "title": "PYTHON", "subtitle": "Backend & systems", "period": "Skill", "summary": "Listed under Backend & systems in my CV.", "tags": ["Backend & systems"], "details": ["Listed under Backend & systems in my CV.", "Python · FastAPI · REST APIs · WebSockets · Protocol Buffers · SQLite · C/C++"] },
+    { "id": "skill-fastapi", "cat": "skills", "icon": "cpu", "title": "FASTAPI", "subtitle": "Backend & systems", "period": "Skill", "summary": "Listed under Backend & systems in my CV.", "tags": ["Backend & systems"], "details": ["Listed under Backend & systems in my CV.", "Python · FastAPI · REST APIs · WebSockets · Protocol Buffers · SQLite · C/C++"] },
+    { "id": "skill-rest-apis", "cat": "skills", "icon": "cpu", "title": "REST APIS", "subtitle": "Backend & systems", "period": "Skill", "summary": "Listed under Backend & systems in my CV.", "tags": ["Backend & systems"], "details": ["Listed under Backend & systems in my CV.", "Python · FastAPI · REST APIs · WebSockets · Protocol Buffers · SQLite · C/C++"] },
+    { "id": "skill-websockets", "cat": "skills", "icon": "cpu", "title": "WEBSOCKETS", "subtitle": "Backend & systems", "period": "Skill", "summary": "Listed under Backend & systems in my CV.", "tags": ["Backend & systems"], "details": ["Listed under Backend & systems in my CV.", "Python · FastAPI · REST APIs · WebSockets · Protocol Buffers · SQLite · C/C++"] },
+    { "id": "skill-protocol-buffers", "cat": "skills", "icon": "cpu", "title": "PROTOCOL BUFFERS", "subtitle": "Backend & systems", "period": "Skill", "summary": "Listed under Backend & systems in my CV.", "tags": ["Backend & systems"], "details": ["Listed under Backend & systems in my CV.", "Python · FastAPI · REST APIs · WebSockets · Protocol Buffers · SQLite · C/C++"] },
+    { "id": "skill-sqlite", "cat": "skills", "icon": "cpu", "title": "SQLITE", "subtitle": "Backend & systems", "period": "Skill", "summary": "Listed under Backend & systems in my CV.", "tags": ["Backend & systems"], "details": ["Listed under Backend & systems in my CV.", "Python · FastAPI · REST APIs · WebSockets · Protocol Buffers · SQLite · C/C++"] },
+    { "id": "skill-c-cpp", "cat": "skills", "icon": "cpu", "title": "C/C++", "subtitle": "Backend & systems", "period": "Skill", "summary": "Listed under Backend & systems in my CV.", "tags": ["Backend & systems"], "details": ["Listed under Backend & systems in my CV.", "Python · FastAPI · REST APIs · WebSockets · Protocol Buffers · SQLite · C/C++"] },
+    { "id": "skill-react-js", "cat": "skills", "icon": "code", "title": "REACT.JS", "subtitle": "Frontend", "period": "Skill", "summary": "Listed under Frontend in my CV.", "tags": ["Frontend"], "details": ["Listed under Frontend in my CV.", "React.js · TypeScript · Analytics dashboards · System monitoring · Event-driven systems"] },
+    { "id": "skill-typescript", "cat": "skills", "icon": "code", "title": "TYPESCRIPT", "subtitle": "Frontend", "period": "Skill", "summary": "Listed under Frontend in my CV.", "tags": ["Frontend"], "details": ["Listed under Frontend in my CV.", "React.js · TypeScript · Analytics dashboards · System monitoring · Event-driven systems"] },
+    { "id": "skill-analytics-dashboards", "cat": "skills", "icon": "code", "title": "ANALYTICS DASHBOARDS", "subtitle": "Frontend", "period": "Skill", "summary": "Listed under Frontend in my CV.", "tags": ["Frontend"], "details": ["Listed under Frontend in my CV.", "React.js · TypeScript · Analytics dashboards · System monitoring · Event-driven systems"] },
+    { "id": "skill-system-monitoring", "cat": "skills", "icon": "code", "title": "SYSTEM MONITORING", "subtitle": "Frontend", "period": "Skill", "summary": "Listed under Frontend in my CV.", "tags": ["Frontend"], "details": ["Listed under Frontend in my CV.", "React.js · TypeScript · Analytics dashboards · System monitoring · Event-driven systems"] },
+    { "id": "skill-event-driven-systems", "cat": "skills", "icon": "code", "title": "EVENT-DRIVEN SYSTEMS", "subtitle": "Frontend", "period": "Skill", "summary": "Listed under Frontend in my CV.", "tags": ["Frontend"], "details": ["Listed under Frontend in my CV.", "React.js · TypeScript · Analytics dashboards · System monitoring · Event-driven systems"] },
+    { "id": "skill-git", "cat": "skills", "icon": "wrench", "title": "GIT", "subtitle": "Tools & approach", "period": "Skill", "summary": "Listed under Tools & approach in my CV.", "tags": ["Tools & approach"], "details": ["Listed under Tools & approach in my CV.", "Git · Docker · VS Code · PostgreSQL · Open-source integration · AI-assisted development · Rapid prototyping"] },
+    { "id": "skill-docker", "cat": "skills", "icon": "wrench", "title": "DOCKER", "subtitle": "Tools & approach", "period": "Skill", "summary": "Listed under Tools & approach in my CV.", "tags": ["Tools & approach"], "details": ["Listed under Tools & approach in my CV.", "Git · Docker · VS Code · PostgreSQL · Open-source integration · AI-assisted development · Rapid prototyping"] },
+    { "id": "skill-vs-code", "cat": "skills", "icon": "wrench", "title": "VS CODE", "subtitle": "Tools & approach", "period": "Skill", "summary": "Listed under Tools & approach in my CV.", "tags": ["Tools & approach"], "details": ["Listed under Tools & approach in my CV.", "Git · Docker · VS Code · PostgreSQL · Open-source integration · AI-assisted development · Rapid prototyping"] },
+    { "id": "skill-postgresql", "cat": "skills", "icon": "wrench", "title": "POSTGRESQL", "subtitle": "Tools & approach", "period": "Skill", "summary": "Listed under Tools & approach in my CV.", "tags": ["Tools & approach"], "details": ["Listed under Tools & approach in my CV.", "Git · Docker · VS Code · PostgreSQL · Open-source integration · AI-assisted development · Rapid prototyping"] },
+    { "id": "skill-open-source", "cat": "skills", "icon": "wrench", "title": "OPEN-SOURCE INTEGRATION", "subtitle": "Tools & approach", "period": "Skill", "summary": "Listed under Tools & approach in my CV.", "tags": ["Tools & approach"], "details": ["Listed under Tools & approach in my CV.", "Git · Docker · VS Code · PostgreSQL · Open-source integration · AI-assisted development · Rapid prototyping"] },
+    { "id": "skill-ai-assisted", "cat": "skills", "icon": "wrench", "title": "AI-ASSISTED DEVELOPMENT", "subtitle": "Tools & approach", "period": "Skill", "summary": "Listed under Tools & approach in my CV.", "tags": ["Tools & approach"], "details": ["Listed under Tools & approach in my CV.", "Git · Docker · VS Code · PostgreSQL · Open-source integration · AI-assisted development · Rapid prototyping"] },
+    { "id": "skill-rapid-prototyping", "cat": "skills", "icon": "wrench", "title": "RAPID PROTOTYPING", "subtitle": "Tools & approach", "period": "Skill", "summary": "Listed under Tools & approach in my CV.", "tags": ["Tools & approach"], "details": ["Listed under Tools & approach in my CV.", "Git · Docker · VS Code · PostgreSQL · Open-source integration · AI-assisted development · Rapid prototyping"] },
+    { "id": "skill-roadmapping", "cat": "skills", "icon": "compass", "title": "ROADMAPPING", "subtitle": "Product & leadership", "period": "Skill", "summary": "Listed under Product & leadership in my CV.", "tags": ["Product & leadership"], "details": ["Listed under Product & leadership in my CV.", "Roadmapping · GTM strategy · Project ownership · Team planning · Adaptability · Communication"] },
+    { "id": "skill-gtm-strategy", "cat": "skills", "icon": "compass", "title": "GTM STRATEGY", "subtitle": "Product & leadership", "period": "Skill", "summary": "Listed under Product & leadership in my CV.", "tags": ["Product & leadership"], "details": ["Listed under Product & leadership in my CV.", "Roadmapping · GTM strategy · Project ownership · Team planning · Adaptability · Communication"] },
+    { "id": "skill-project-ownership", "cat": "skills", "icon": "compass", "title": "PROJECT OWNERSHIP", "subtitle": "Product & leadership", "period": "Skill", "summary": "Listed under Product & leadership in my CV.", "tags": ["Product & leadership"], "details": ["Listed under Product & leadership in my CV.", "Roadmapping · GTM strategy · Project ownership · Team planning · Adaptability · Communication"] },
+    { "id": "skill-team-planning", "cat": "skills", "icon": "compass", "title": "TEAM PLANNING", "subtitle": "Product & leadership", "period": "Skill", "summary": "Listed under Product & leadership in my CV.", "tags": ["Product & leadership"], "details": ["Listed under Product & leadership in my CV.", "Roadmapping · GTM strategy · Project ownership · Team planning · Adaptability · Communication"] },
+    { "id": "skill-adaptability", "cat": "skills", "icon": "compass", "title": "ADAPTABILITY", "subtitle": "Product & leadership", "period": "Skill", "summary": "Listed under Product & leadership in my CV.", "tags": ["Product & leadership"], "details": ["Listed under Product & leadership in my CV.", "Roadmapping · GTM strategy · Project ownership · Team planning · Adaptability · Communication"] },
+    { "id": "skill-communication", "cat": "skills", "icon": "compass", "title": "COMMUNICATION", "subtitle": "Product & leadership", "period": "Skill", "summary": "Listed under Product & leadership in my CV.", "tags": ["Product & leadership"], "details": ["Listed under Product & leadership in my CV.", "Roadmapping · GTM strategy · Project ownership · Team planning · Adaptability · Communication"] }
+  ],
+  "assetColors": [
+    { "bg": "#E4572E", "text": "#ffffff" },
+    { "bg": "#F3A712", "text": "#1d1d1d" },
+    { "bg": "#2E86AB", "text": "#ffffff" },
+    { "bg": "#7B2CBF", "text": "#ffffff" },
+    { "bg": "#3BB273", "text": "#ffffff" },
+    { "bg": "#E84F8C", "text": "#ffffff" },
+    { "bg": "#1F2A44", "text": "#ffffff" },
+    { "bg": "#F6D55C", "text": "#1d1d1d" },
+    { "bg": "#20A39E", "text": "#ffffff" },
+    { "bg": "#FF7B54", "text": "#ffffff" },
+    { "bg": "#5C6BC0", "text": "#ffffff" },
+    { "bg": "#EFE3D6", "text": "#1d1d1d" }
+  ]
+}
