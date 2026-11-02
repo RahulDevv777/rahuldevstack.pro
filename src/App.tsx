@@ -38,13 +38,7 @@ interface DetailState {
 
 const readHash = () => window.location.hash.replace(/^#/, '');
 
-/** Wheel deltas in a single unit (pixels) so thresholds mean the same thing. */
-const normalizeWheel = (event: WheelEvent) => {
-  if (event.deltaMode === 1) return event.deltaY * 16;
-  if (event.deltaMode === 2) return event.deltaY * window.innerHeight;
-  return event.deltaY;
-};
-
+/** @deprecated - use direct deltaY with deltaMode scaling in onWheel instead */
 const detailFromHash = (): DetailId | null => {
   const hash = readHash();
   return (DETAIL_IDS as string[]).includes(hash) ? (hash as DetailId) : null;
@@ -300,44 +294,21 @@ export const App = () => {
 
     // One gesture = one step. A real scroll accelerates or holds steady;
     // trackpad inertia only ever decelerates, so the tail is ignored.
-    const buf: number[] = [];
+    let buf: number[] = [];
     let lastT = 0;
-    let stepped = false;
-    let peak = 0;
     const avg = (a: number[], n: number) =>
       a.reduce((s, v) => s + v, 0) / n;
 
-    const onWheel = (event: WheelEvent) => {
-      if (suspended()) return;
-      event.preventDefault();
-
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
       const now = performance.now();
-      if (now - lastT > 200) {
-        buf.length = 0; // new gesture after a quiet moment
-        stepped = false;
-        peak = 0;
-      }
+      if (now - lastT > 200) buf = []; // new gesture after a quiet moment
       lastT = now;
-
-      const d = normalizeWheel(event);
-      const mag = Math.abs(d);
-      buf.push(mag);
-      if (buf.length > 150) buf.shift(); // always record, even when locked
-      if (mag > peak) peak = mag;
-
-      if (lockedRef.current || mag < 1) return;
-
-      // Decelerating = momentum tail. The first event of a gesture always
-      // counts; after that the two windows have to exist to be compared.
-      const recent = avg(buf.slice(-10), Math.min(10, buf.length));
-      const warmed = buf.length >= 20;
-      const rising =
-        recent >= peak * 0.75 &&
-        (!warmed || recent >= avg(buf.slice(-20, -10), 10) * 0.98);
-      if (stepped && !rising) return;
-
-      stepped = true;
-      trigger(d > 0 ? 1 : -1, 'wheel');
+      const d = e.deltaY * (e.deltaMode === 1 ? 33 : e.deltaMode === 2 ? innerHeight : 1);
+      buf.push(Math.abs(d)); if (buf.length > 150) buf.shift(); // always record, even when locked
+      if (suspended() || lockedRef.current || Math.abs(d) < 1) return;
+      // accelerating or steady = a real scroll; decelerating = momentum tail, ignore
+      if (avg(buf.slice(-10), 10) >= avg(buf.slice(-20, -10), 10) * 0.98) trigger(d > 0 ? 1 : -1, 'wheel');
     };
 
     let touchStartY = 0;
