@@ -1011,11 +1011,12 @@ ol {
 .ring {
   position: absolute;
   left: 50%;
-  top: 45%;
+  top: 41%;
   width: 0;
   height: 0;
   transform-style: preserve-3d;
-  transform: rotateX(-18deg);
+  transform: rotateX(-7deg);
+  perspective-origin: 50% 33%;
 }
 
 .rc {
@@ -1028,17 +1029,19 @@ ol {
   overflow: hidden;
   text-align: left;
   background-color: var(--card-bg);
-  background-image: linear-gradient(
-    160deg,
-    rgba(255, 255, 255, 0.18) 0%,
-    rgba(255, 255, 255, 0) 46%,
-    rgba(0, 0, 0, 0.06) 100%
-  );
   color: var(--card-ink);
   transform-origin: 50% 50%;
   transform-style: preserve-3d;
-  will-change: transform, opacity;
   cursor: pointer;
+}
+.rc::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: #fff;
+  opacity: var(--w, 0);
+  pointer-events: none;
 }
 
 .rc:focus-visible {
@@ -1052,6 +1055,39 @@ ol {
 
 .card-face {
   isolation: isolate;
+}
+
+/* Flat 2D twin of the front ring card. Engines that flatten the 3D ring paint
+   the neighbours across the focused card; this copy always sits on top. */
+#focus-card {
+  position: fixed;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  margin: 0;
+  padding: 20px;
+  border: 0;
+  border-radius: 14px;
+  background-color: var(--card-bg);
+  background-image: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0) 46%,
+    rgba(0, 0, 0, 0.06) 100%
+  );
+  color: var(--card-ink);
+  font-family: inherit;
+  font-size: 16px;
+  text-align: left;
+  box-shadow: 0 50px 90px -40px rgba(0, 0, 0, 0.45);
+  transform-origin: 0 0;
+  opacity: 0;
+  pointer-events: none;
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .card-face::after {
@@ -1073,14 +1109,14 @@ ol {
   align-self: flex-start;
   display: inline-flex;
   align-items: center;
-  padding: 0.42em 0.8em;
+  padding: 0.5em 1em;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.86);
   color: #1d1d1d;
-  font-size: max(8px, 0.52em);
-  font-weight: 600;
+  font-size: max(10px, 0.45em);
+  font-weight: 500;
   line-height: 1.2;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -1141,7 +1177,7 @@ ol {
   top: 0;
   bottom: 0;
   z-index: 5;
-  width: 36vw;
+  width: 40vw;
   overflow: hidden;
   pointer-events: none;
 }
@@ -1772,6 +1808,9 @@ ol {
   letter-spacing: -0.03em;
   text-transform: uppercase;
   white-space: nowrap;
+  color: #000;
+  -webkit-text-fill-color: #000;
+  background: none;
 }
 
 .contact-content {
