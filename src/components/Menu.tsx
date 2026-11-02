@@ -321,6 +321,8 @@ export const Menu = ({
   }, [apiRef, gesture, jumpTo]);
 
   const handleClick = (i: number) => {
+    // Never leave the heading holding focus: its ring reads as a black box.
+    itemRefs.current[i]?.blur();
     if (!activeRef.current || dimmed) return;
     if (i === LAST) return; // ASSETS never opens on click.
     if (i === activeIndexRef.current && settled) {

@@ -349,11 +349,9 @@ ol {
 .menu-item-text {
   display: block;
   padding-bottom: 0.06em;
-  background: var(--gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
+  background: none;
+  color: #000;
+  -webkit-text-fill-color: #000;
 }
 
 .menu-item.is-active .menu-item-text {
@@ -671,11 +669,41 @@ ol {
 }
 
 .fit-heading {
-  background: var(--gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
+  background: none;
+  color: #000;
+  -webkit-text-fill-color: #000;
+}
+
+/* Headings never draw a focus ring or a tap box. */
+.menu-item,
+.menu-item *,
+.fit-heading,
+.contact-heading,
+.detail-heading {
+  outline: none !important;
+  box-shadow: none;
+  border: 0;
+  background: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.menu-item:focus,
+.menu-item:focus-visible,
+.menu-item:active,
+.menu-item *:focus,
+.menu-item *:focus-visible,
+.fit-heading:focus,
+.fit-heading:focus-visible,
+.contact-heading:focus,
+.contact-heading:focus-visible,
+.detail-heading:focus,
+.detail-heading:focus-visible {
+  outline: none !important;
+  box-shadow: none;
+  border: 0;
+  background: none;
 }
 
 .detail-content {
