@@ -169,6 +169,12 @@ export const RingPage = ({
   const [expanded, setExpanded] = useState<number | null>(null);
   const [expandedClosing, setExpandedClosing] = useState(false);
 
+  // Flat 2D twin of the front card (see #focus-card in index.css).
+  const focusCardRef = useRef<HTMLButtonElement>(null);
+  const focusOverlayRef = useRef(-1);
+  const [focusOverlay, setFocusOverlay] = useState(0);
+  const [inView, setInView] = useState(false);
+
   const onOverlayRef = useRef(onOverlayChange);
   onOverlayRef.current = onOverlayChange;
 
@@ -176,6 +182,8 @@ export const RingPage = ({
     const q = qDisplay.current;
     const current = layoutRef.current;
     const introState = intro.current;
+    let bestIdx = 0;
+    let bf = -1;
 
     for (let i = 0; i < N; i += 1) {
       const element = cardRefs.current[i];
@@ -185,6 +193,12 @@ export const RingPage = ({
       if (th > 180) th -= 360;
 
       const focus = Math.exp(-((th / 5) ** 2));
+      if (focus > bf) {
+        bf = focus;
+        bestIdx = i;
+      }
+      // Nudge the near neighbours further out so they never crowd the front.
+      const th2 = th + Math.sign(th) * 6 * Math.exp(-((th / 14) ** 2)) * (1 - focus);
       const spoke = (th >= 0 ? -90 : 90) * (1 - focus);
       // The focused card has to sit far enough forward that the tilted
       // neighbours (their outer edges swing forward by half a card width)
@@ -194,7 +208,7 @@ export const RingPage = ({
       const scale = 1 + focus * 0.1;
 
       element.style.transform =
-        `rotateY(${th.toFixed(3)}deg) translateZ(${z.toFixed(2)}px) ` +
+        `rotateY(${th2.toFixed(3)}deg) translateZ(${z.toFixed(2)}px) ` +
         `translateY(${lift.toFixed(2)}px) rotateY(${spoke.toFixed(3)}deg) ` +
         `scale(${scale.toFixed(4)})`;
 
@@ -216,6 +230,64 @@ export const RingPage = ({
       }
       element.style.opacity = alpha.toFixed(3);
     }
+
+    // The front card is mirrored by a flat 2D overlay so nothing in the 3D
+    // stack can ever paint across it. It fades in on arrival, out on departure.
+    const overlay = focusCardRef.current;
+    if (overlay) {
+      const a = clamp((bf - 0.7) / 0.25, 0, 1);
+      overlay.style.opacity = a.toFixed(3);
+      overlay.style.pointerEvents = a > 0.5 ? 'auto' : 'none';
+    }
+    if (bestIdx !== focusOverlayRef.current) {
+      focusOverlayRef.current = bestIdx;
+      setFocusOverlay(bestIdx);
+    }
+  }, []);
+
+  // Size and place the flat overlay from the real 3D card. Init and resize
+  // only — never inside the animation frame loop.
+  const placeFocusCard = useCallback(() => {
+    const overlay = focusCardRef.current;
+    if (!overlay) return;
+
+    // The front-most card sits at the ring's front no matter how far the
+    // wheel has turned, so its box is the resting box.
+    const front = cardRefs.current[mod(Math.round(qDisplay.current), N)];
+    if (!front) return;
+
+    const r = front.getBoundingClientRect();
+    if (r.width <= 0 || r.height <= 0) return;
+
+    const s = r.width / 250;
+    overlay.style.left = `${r.left.toFixed(2)}px`;
+    overlay.style.top = `${r.top.toFixed(2)}px`;
+    overlay.style.width = '250px';
+    overlay.style.height = `${(r.height / s).toFixed(2)}px`;
+    overlay.style.transform = `scale(${s.toFixed(4)})`;
+  }, []);
+
+  useLayoutEffect(() => {
+    const raf = requestAnimationFrame(() => {
+      renderRing(performance.now());
+      placeFocusCard();
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [active, inView, layout, placeFocusCard, renderRing]);
+
+  // Only mirror the ring while the ring page is actually on screen.
+  useEffect(() => {
+    const element = sectionRef.current;
+    if (!element || typeof IntersectionObserver === 'undefined') {
+      setInView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => setInView(entries[0].intersectionRatio > 0.4),
+      { threshold: [0, 0.4, 1] },
+    );
+    observer.observe(element);
+    return () => observer.disconnect();
   }, []);
 
   const startTween = useCallback(
@@ -568,6 +640,9 @@ export const RingPage = ({
           <div className="ring">
             {ASSETS.map((item, i) => {
               const palette = assetColor(i);
+              let th = (mod(i - qDisplay.current, N) * 360) / N;
+              if (th > 180) th -= 360;
+              const w = (1 - Math.exp(-((th / 26) ** 2))) * 0.55;
               return (
                 <button
                   key={item.id}
@@ -594,6 +669,7 @@ export const RingPage = ({
                       fontSize: layout.fs,
                       '--card-bg': palette.bg,
                       '--card-ink': palette.text,
+                      '--w': w.toFixed(4),
                     } as CSSProperties
                   }
                   onClick={() => handleCardClick(i)}
@@ -659,6 +735,29 @@ export const RingPage = ({
           </svg>
         </button>
       </section>
+
+      {active && inView && expanded === null
+        ? createPortal(
+            <button
+              type="button"
+              id="focus-card"
+              ref={focusCardRef}
+              className="card-face"
+              tabIndex={-1}
+              aria-hidden="true"
+              style={
+                {
+                  '--card-bg': assetColor(focusOverlay).bg,
+                  '--card-ink': assetColor(focusOverlay).text,
+                } as CSSProperties
+              }
+              onClick={() => openExpanded(focusOverlay)}
+            >
+              <CardFace card={ASSETS[focusOverlay]} icon={48} />
+            </button>,
+            document.body,
+          )
+        : null}
 
       {expanded !== null
         ? createPortal(
