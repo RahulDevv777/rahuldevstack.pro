@@ -1,0 +1,6 @@
+- [x] T0 - Read code, map project, create PROJECT_MAP.md
+- [x] T1 - Fixed wheel handler: replaced per-event threshold with accumulator-based handler (one swipe = one step, inertia tail ignored)
+- [x] T2 - Headings: removed focus rectangle, made all big headings pitch black (#000), added outline:none/box-shadow:none/border:0/background:none/-webkit-tap-highlight-color:transparent/user-select:none for :focus/:focus-visible/:active, blur after click already in place
+- [x] T3 - Ring glitch: focused card as flat 2D overlay on top of 3D ring so nothing crosses it; overlay fades in/out based on focus weight; neighbors pushed outward
+- [x] T4 - Ring visual: rotateX(-7deg) top:41%, perspective-origin 50% 33%; fade without transparency via --w variable and ::after pseudo-element; cards wash toward white at edges, stay opaque at center; side bands 40vw wide with 4 blur layers; royal jewel palette in cv.json; chip letter-spacing .22em weight 500 10px; removed will-change from ring cards
+- [x] T5 - Smoothness: one rAF loop via addTick; no getBoundingClientRect inside loop; lerp .12 via damp(0.12, dt); no will-change on 51 ring cards; menu step animation 700ms cubic-bezier(.22,1,.36,1); build passes
