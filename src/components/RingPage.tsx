@@ -186,14 +186,23 @@ export const RingPage = ({
 
       const focus = Math.exp(-((th / 5) ** 2));
       const spoke = (th >= 0 ? -90 : 90) * (1 - focus);
-      const z = current.ringR + focus * 120 * current.u;
+      // The focused card has to sit far enough forward that the tilted
+      // neighbours (their outer edges swing forward by half a card width)
+      // can never cut through it.
+      const z = current.ringR + focus * 210 * current.u;
       const lift = -focus * 195 * current.u;
-      const scale = 1 + focus * 0.15;
+      const scale = 1 + focus * 0.1;
 
       element.style.transform =
         `rotateY(${th.toFixed(3)}deg) translateZ(${z.toFixed(2)}px) ` +
         `translateY(${lift.toFixed(2)}px) rotateY(${spoke.toFixed(3)}deg) ` +
         `scale(${scale.toFixed(4)})`;
+
+      // Paint order by depth. Engines that flatten the ring (an ancestor is
+      // composited) ignore 3D sorting and paint in DOM order, which lets the
+      // neighbours cut through the focused card. This keeps the card closest
+      // to the camera on top everywhere.
+      element.style.zIndex = String(Math.round(900 - Math.abs(th) * 4));
 
       let alpha = Math.abs(th) > 150 ? 0.5 : 1;
       if (introState.active) {

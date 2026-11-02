@@ -12,9 +12,7 @@ import { clamp, easeOut, prefersReducedMotion } from '../lib/motion';
 import { addTick } from '../lib/ticker';
 
 const LAST = MENU_SECTIONS.length - 1;
-const STEP_MS = 800;
-const LOCK_MS = 950;
-const REST_MS = 350;
+const STEP_MS = 500;
 
 export interface MenuApi {
   gesture: (dir: 1 | -1, moveFocus?: boolean) => boolean;
@@ -101,8 +99,6 @@ export const Menu = ({
     t0: number;
     dur: number;
   } | null>(null);
-  const lockedUntilRef = useRef(0);
-  const settledAtRef = useRef(performance.now());
   const activeIndexRef = useRef(index);
   const hoveredRef = useRef(-1);
   const needRenderRef = useRef(true);
@@ -129,7 +125,6 @@ export const Menu = ({
     activeIndexRef.current = target;
     setActiveIndex(target);
     setSettled(true);
-    settledAtRef.current = performance.now();
     propsRef.current.onIndexChange(target);
   }, []);
 
@@ -143,11 +138,12 @@ export const Menu = ({
         pDisplayRef.current = target;
         tweenRef.current = null;
         needRenderRef.current = true;
-        lockedUntilRef.current = now + LOCK_MS;
         settle(target);
         return;
       }
 
+      // Re-target from wherever the wheel currently is, so a step that arrives
+      // mid-animation chains on instead of being queued behind it.
       pTargetRef.current = target;
       tweenRef.current = {
         from: pDisplayRef.current,
@@ -155,7 +151,6 @@ export const Menu = ({
         t0: now,
         dur: STEP_MS,
       };
-      lockedUntilRef.current = now + LOCK_MS;
       setSettled(false);
     },
     [settle],
@@ -249,8 +244,6 @@ export const Menu = ({
   const gesture = useCallback(
     (dir: 1 | -1, moveFocus = false) => {
       if (!activeRef.current || propsRef.current.dimmed) return false;
-      const now = performance.now();
-      if (now < lockedUntilRef.current) return false;
 
       const current = clamp(Math.round(pTargetRef.current), 0, LAST);
       markScrolled();
@@ -264,11 +257,8 @@ export const Menu = ({
           }
           return true;
         }
-        if (now - settledAtRef.current >= REST_MS) {
-          propsRef.current.onExit(1);
-          return true;
-        }
-        return false;
+        propsRef.current.onExit(1);
+        return true;
       }
 
       if (current > 0) {
@@ -279,11 +269,8 @@ export const Menu = ({
         }
         return true;
       }
-      if (now - settledAtRef.current >= REST_MS) {
-        propsRef.current.onExit(-1);
-        return true;
-      }
-      return false;
+      propsRef.current.onExit(-1);
+      return true;
     },
     [markScrolled, startTween],
   );
@@ -299,7 +286,6 @@ export const Menu = ({
         pDisplayRef.current = target;
         tweenRef.current = null;
         needRenderRef.current = true;
-        lockedUntilRef.current = performance.now() + LOCK_MS;
         settle(target);
         return;
       }
@@ -326,7 +312,6 @@ export const Menu = ({
       propsRef.current.onOpen(MENU_SECTIONS[i].id);
       return;
     }
-    if (performance.now() < lockedUntilRef.current) return;
     markScrolled();
     startTween(i);
   };
