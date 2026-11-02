@@ -18,14 +18,8 @@ type Page = 0 | 1 | 2 | 3;
 
 const DETAIL_IDS: DetailId[] = ['about', 'projects', 'education', 'skills'];
 
-/** Full-page travel time. Kept short so a second flick never feels eaten. */
-const PAGE_MS = 640;
-/** A wheel stream is closed after this much silence. Trackpad inertia fires
- *  every 8–16ms, so this keeps one flick = one step even if the main thread
- *  hiccups, while two deliberate flicks (≥100ms apart) are two gestures. */
-const WHEEL_QUIET_MS = 90;
-/** Tiny travel needed before a gesture counts, so one trackpad tick is enough. */
-const WHEEL_STEP_PX = 3;
+/** Page change travel + the matching input lock. */
+const PAGE_MS = 900;
 
 const MENU_INDEX: Record<MenuId, number> = {
   about: 0,
@@ -95,6 +89,7 @@ export const App = () => {
   const menuIndexRef = useRef(menuIndex);
   const detailRef = useRef(detail);
   const lockedRef = useRef(false);
+  const lockTimerRef = useRef(0);
   const ringOverlayRef = useRef(false);
 
   detailRef.current = detail;
@@ -165,6 +160,11 @@ export const App = () => {
       }
 
       lockedRef.current = true;
+      window.clearTimeout(lockTimerRef.current);
+      lockTimerRef.current = window.setTimeout(() => {
+        lockedRef.current = false;
+      }, PAGE_MS);
+
       const t0 = performance.now();
       let unsubscribe = () => {};
 
@@ -173,12 +173,7 @@ export const App = () => {
         const y = start + (end - start) * cinematic(t);
         track.style.transform = `translate3d(0, ${y.toFixed(2)}px, 0)`;
 
-        if (t >= 1) {
-          unsubscribe();
-          window.setTimeout(() => {
-            lockedRef.current = false;
-          }, 40);
-        }
+        if (t >= 1) unsubscribe();
       });
     },
     [],
@@ -303,45 +298,46 @@ export const App = () => {
       }
     };
 
-    // A wheel gesture opens with the first event and closes after the stream
-    // goes quiet. One gesture = one step, so trackpad inertia can never skip
-    // a page or a heading — but the tiniest flick is still enough.
-    let wheelAcc = 0;
-    let wheelBusy = false;
-    let quietTimer = 0;
-
-    const closeStream = () => {
-      wheelBusy = false;
-      wheelAcc = 0;
-    };
+    // One gesture = one step. A real scroll accelerates or holds steady;
+    // trackpad inertia only ever decelerates, so the tail is ignored.
+    const buf: number[] = [];
+    let lastT = 0;
+    let stepped = false;
+    let peak = 0;
+    const avg = (a: number[], n: number) =>
+      a.reduce((s, v) => s + v, 0) / n;
 
     const onWheel = (event: WheelEvent) => {
-      // Detail and expanded-card layers own their own scroll. Returning early
-      // lets the expanded panel and detail column receive native wheel input.
       if (suspended()) return;
-
       event.preventDefault();
-      const delta = normalizeWheel(event);
-      if (!delta) return;
 
-      window.clearTimeout(quietTimer);
-      quietTimer = window.setTimeout(closeStream, WHEEL_QUIET_MS);
-
-      // This gesture already spent its single step.
-      if (wheelBusy) return;
-
-      // Direction flip inside one gesture means the user changed their mind.
-      if ((wheelAcc > 0 && delta < 0) || (wheelAcc < 0 && delta > 0)) {
-        wheelAcc = 0;
+      const now = performance.now();
+      if (now - lastT > 200) {
+        buf.length = 0; // new gesture after a quiet moment
+        stepped = false;
+        peak = 0;
       }
-      wheelAcc += delta;
+      lastT = now;
 
-      if (Math.abs(wheelAcc) < WHEEL_STEP_PX) return;
+      const d = normalizeWheel(event);
+      const mag = Math.abs(d);
+      buf.push(mag);
+      if (buf.length > 150) buf.shift(); // always record, even when locked
+      if (mag > peak) peak = mag;
 
-      const dir = wheelAcc > 0 ? 1 : -1;
-      wheelAcc = 0;
-      wheelBusy = true;
-      trigger(dir, 'wheel');
+      if (lockedRef.current || mag < 1) return;
+
+      // Decelerating = momentum tail. The first event of a gesture always
+      // counts; after that the two windows have to exist to be compared.
+      const recent = avg(buf.slice(-10), Math.min(10, buf.length));
+      const warmed = buf.length >= 20;
+      const rising =
+        recent >= peak * 0.75 &&
+        (!warmed || recent >= avg(buf.slice(-20, -10), 10) * 0.98);
+      if (stepped && !rising) return;
+
+      stepped = true;
+      trigger(d > 0 ? 1 : -1, 'wheel');
     };
 
     let touchStartY = 0;
@@ -403,7 +399,6 @@ export const App = () => {
     window.addEventListener('keydown', onKeyDown);
 
     return () => {
-      window.clearTimeout(quietTimer);
       window.removeEventListener('wheel', onWheel);
       window.removeEventListener('touchstart', onTouchStart);
       window.removeEventListener('touchend', onTouchEnd);

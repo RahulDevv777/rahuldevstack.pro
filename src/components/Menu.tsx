@@ -12,7 +12,9 @@ import { clamp, easeOut, prefersReducedMotion } from '../lib/motion';
 import { addTick } from '../lib/ticker';
 
 const LAST = MENU_SECTIONS.length - 1;
-const STEP_MS = 500;
+const STEP_MS = 700;
+const STEP_LOCK_MS = 280;
+const EXIT_REST_MS = 250;
 
 export interface MenuApi {
   gesture: (dir: 1 | -1, moveFocus?: boolean) => boolean;
@@ -99,6 +101,8 @@ export const Menu = ({
     t0: number;
     dur: number;
   } | null>(null);
+  const lockUntilRef = useRef(0);
+  const settledAtRef = useRef(0);
   const activeIndexRef = useRef(index);
   const hoveredRef = useRef(-1);
   const needRenderRef = useRef(true);
@@ -125,6 +129,7 @@ export const Menu = ({
     activeIndexRef.current = target;
     setActiveIndex(target);
     setSettled(true);
+    settledAtRef.current = performance.now();
     propsRef.current.onIndexChange(target);
   }, []);
 
@@ -138,6 +143,7 @@ export const Menu = ({
         pDisplayRef.current = target;
         tweenRef.current = null;
         needRenderRef.current = true;
+        lockUntilRef.current = now + STEP_LOCK_MS;
         settle(target);
         return;
       }
@@ -151,6 +157,7 @@ export const Menu = ({
         t0: now,
         dur: STEP_MS,
       };
+      lockUntilRef.current = now + STEP_LOCK_MS;
       setSettled(false);
     },
     [settle],
@@ -244,6 +251,8 @@ export const Menu = ({
   const gesture = useCallback(
     (dir: 1 | -1, moveFocus = false) => {
       if (!activeRef.current || propsRef.current.dimmed) return false;
+      const now = performance.now();
+      if (now < lockUntilRef.current) return false;
 
       const current = clamp(Math.round(pTargetRef.current), 0, LAST);
       markScrolled();
@@ -257,8 +266,11 @@ export const Menu = ({
           }
           return true;
         }
-        propsRef.current.onExit(1);
-        return true;
+        if (now - settledAtRef.current >= EXIT_REST_MS) {
+          propsRef.current.onExit(1);
+          return true;
+        }
+        return false;
       }
 
       if (current > 0) {
@@ -269,8 +281,11 @@ export const Menu = ({
         }
         return true;
       }
-      propsRef.current.onExit(-1);
-      return true;
+      if (now - settledAtRef.current >= EXIT_REST_MS) {
+        propsRef.current.onExit(-1);
+        return true;
+      }
+      return false;
     },
     [markScrolled, startTween],
   );
@@ -312,6 +327,7 @@ export const Menu = ({
       propsRef.current.onOpen(MENU_SECTIONS[i].id);
       return;
     }
+    if (performance.now() < lockUntilRef.current) return;
     markScrolled();
     startTween(i);
   };
