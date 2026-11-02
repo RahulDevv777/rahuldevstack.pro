@@ -1,21 +1,24 @@
-Stack: Vite + React 19 + TS, oxlint. Wiring is prop drilling + hash URL.
-- src/main.tsx        entry, renders App
-- src/App.tsx (475)   page track 0..3, detail overlays, hash routing,
-                      GLOBAL wheel/touch/key engine (window.addEventListener)
-- src/components/Menu.tsx (430)   5 headings wheel; gesture()/jumpTo()/lock
-- src/components/RingPage.tsx (902) 47-card 3D ring + expanded card portal
-- src/components/Detail.tsx / DetailContent.tsx  shared-element detail
-- src/components/Contact.tsx   FloatingNav + contact page
-- src/components/FitHeading.tsx, AssetIcon.tsx  helpers
-- src/hooks/useVirtualScroll.ts  inertial column scroll for details
-- src/hooks/useReducedMotion.ts
-- src/lib/ticker.ts   ONE rAF loop (addTick) shared by all animations
-- src/lib/motion.ts   clamp/damp/mod/cubicBezier (easeOut, cinematic)
-- src/data/cv.ts, content.ts, assets.ts, cv.json
-- src/index.css (2360) all styles
-Wheel listener: App.tsx effect ~line 273-415 (single window wheel+touch+key,
-preventDefault, trigger(dir) -> goToPage() or menuApi.gesture()).
-Page timings: PAGE_MS/cinematic in App.goToPage; Menu STEP_MS/LOCK_MS.
-Ring geometry: RingPage.renderRing() (th, focus, spoke, translateZ, zIndex).
-Gotchas: hero SVG frozen; no mock data; motion = transform/opacity only;
-prefers-reduced-motion honoured in lib/motion.ts.
+# PROJECT_MAP.md
+
+## File Overview
+- **src/App.tsx** (≈470 lines) — Main app shell; page state (0=hero,1=menu,2=ring,3=detail,4=contact); wheel listener at line 396 (`window.addEventListener('wheel', onWheel, {passive:false})`); one `onWheel` handler feeds `trigger(dir,'wheel')`; contains `normalizeWheel`, `goToPage`, menu/rings/detail orchestration
+- **src/components/Menu.tsx** (≈450 lines) — Horizontal menu with 5 sections; heading buttons `.menu-item`; gesture `apiRef.gesture(dir)`; step lock `STEP_LOCK_MS=280`; exit lock `STEP_MS=700`
+- **src/components/RingPage.tsx** (≈300 lines) — 3D ring of 51 asset cards; `computeLayout()`, `q`/ `qTarget` tweening; `render()` uses focus weight `f`; neighbor `th2` push; no focused-card overlay yet
+- **src/components/FitHeading.tsx** (≈75 lines) — Fit heading that scales to column width; used on detail pages
+- **src/components/Detail.tsx** (≈230 lines) — Detail overlay with `FitHeading`; heading flies from menu; IntersectionObserver reveals groups
+- **src/components/DetailContent.tsx** — Content groups/masks for detail pages
+- **src/lib/motion.ts** — `clamp`, `lerp`, `damp`, `cubicBezier`, `easeOut`, `cinematic`, `prefersReducedMotion`
+- **src/lib/ticker.ts** — Single `requestAnimationFrame` loop via `addTick`; one loop for Menu + Ring
+- **src/data/cv.json** — Palette, asset data, menu sections; T4 will replace `cv.palette`
+- **src/index.css** — Global styles; `#track { will-change: transform; }`; `:focus-visible { outline: 2px solid var(--ink) }`; hero/fit headings; ring styles; contact page
+
+## Key Functions
+- `normalizeWheel(event)` — converts deltaMode to pixels (lines 42-46 App.tsx)
+- `onWheel(event)` — current handler with buffer/peak/decel detection (lines 310-340 App.tsx)
+- `goToPage(page, opts)` — page navigation with PAGE_MS=900 lock
+- `Menu.gesture(dir, key)` — menu step handler
+- `computeLayout()` — ring layout calculation (RingPage.tsx line 50)
+- `clamp`, `lerp`, `easeOut`, `cinematic` — motion utilities
+
+## Wheel Listener Location
+- `src/App.tsx line 396`: `window.addEventListener('wheel', onWheel, { passive: false });` — registered once in useEffect deps `[goToPage]`
