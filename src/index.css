@@ -1011,11 +1011,11 @@ ol {
 .ring {
   position: absolute;
   left: 50%;
-  top: 41%;
+  top: 42%;
   width: 0;
   height: 0;
   transform-style: preserve-3d;
-  transform: rotateX(-7deg);
+  transform: rotateX(-11deg);
   perspective-origin: 50% 33%;
 }
 
@@ -1034,15 +1034,7 @@ ol {
   transform-style: preserve-3d;
   cursor: pointer;
 }
-.rc::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: #fff;
-  opacity: var(--w, 0);
-  pointer-events: none;
-}
+
 
 .rc:focus-visible {
   outline: 2px solid var(--ink);
@@ -1109,14 +1101,14 @@ ol {
   align-self: flex-start;
   display: inline-flex;
   align-items: center;
-  padding: 0.5em 1em;
+  padding: 0.42em 0.8em;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.86);
   color: #1d1d1d;
-  font-size: max(10px, 0.45em);
-  font-weight: 500;
+  font-size: max(8px, 0.52em);
+  font-weight: 600;
   line-height: 1.2;
-  letter-spacing: 0.22em;
+  letter-spacing: -0.03em;
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -1177,7 +1169,7 @@ ol {
   top: 0;
   bottom: 0;
   z-index: 5;
-  width: 40vw;
+  width: 36vw;
   overflow: hidden;
   pointer-events: none;
 }
