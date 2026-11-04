@@ -1735,197 +1735,118 @@ ol {
    ========================================================================== */
 
 .contact-page {
-  display: grid;
-  grid-template-columns: minmax(0, 38%) minmax(0, 1fr);
-  grid-template-rows: minmax(0, 1fr) auto;
-  column-gap: 0;
-  row-gap: clamp(18px, 3vh, 32px);
-  padding: clamp(84px, 12vh, 130px) var(--gutter)
-    max(26px, calc(env(safe-area-inset-bottom) + 12px));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 var(--gutter);
+  overflow-y: auto;
   background: var(--bg);
 }
 
-.contact-head {
-  grid-column: 1;
-  grid-row: 1;
+/* Big faded letter across the top of the page — same size and full width as
+   the PORTFOLIO letter on the hero page, faded back. */
+.contact-letter {
+  width: 100%;
+  padding: clamp(22px, 3vh, 52px) 0 clamp(34px, 6vh, 80px);
+}
+
+.contact-letter svg {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+}
+
+.contact-letter text {
+  font-family: var(--font);
+  font-variation-settings: 'wght' 900, 'wdth' 125;
+  font-size: 132px;
+  font-weight: 900;
+  fill: rgba(17, 17, 17, 0.10);
+  letter-spacing: 0;
+}
+
+/* Floating iCards: email, LinkedIn, download CV. */
+.i-cards {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(14px, 3vh, 28px);
+  width: 100%;
+  max-width: 720px;
+  padding-bottom: clamp(60px, 10vh, 120px);
+}
+
+.i-card {
+  position: relative;
   display: flex;
   align-items: center;
-  min-width: 0;
-  min-height: 0;
-}
-
-.contact-heading-wrap {
+  gap: 16px;
   width: 100%;
-  min-width: 0;
-}
-
-.contact-heading {
-  display: block;
-  width: max-content;
-  max-width: 100%;
-  padding-bottom: 0.06em;
-  font-size: clamp(2.6rem, 7vw, 7rem);
-  font-weight: 900;
-  line-height: 0.95;
-  letter-spacing: -0.03em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  color: #000;
-  -webkit-text-fill-color: #000;
-  background: none;
-}
-
-.contact-content {
-  grid-column: 2;
-  grid-row: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  align-self: center;
-  gap: clamp(20px, 3.4vh, 34px);
-  width: min(100%, 720px);
-  min-width: 0;
-  margin-left: auto;
-}
-
-.c-group {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-  opacity: 0;
-  transform: translate3d(0, 24px, 0);
+  max-width: 460px;
+  padding: clamp(16px, 3vh, 24px) clamp(20px, 4vw, 36px);
+  border-radius: 22px;
+  background: var(--glass-strong);
+  border: 1px solid var(--glass-edge);
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.10), 0 8px 16px -6px rgba(0, 0, 0, 0.06);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  backdrop-filter: blur(22px) saturate(150%);
+  color: var(--ink);
+  text-decoration: none;
   transition:
-    opacity 800ms var(--ease-out),
-    transform 900ms var(--ease-out);
-  transition-delay: calc(var(--d, 0ms) + 500ms);
+    opacity 700ms var(--ease-out),
+    transform 750ms var(--ease-out),
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease;
+  opacity: 0;
+  transform: translate3d(0, 26px, 0);
+  transition-delay: calc(var(--d, 0ms) + 450ms);
 }
 
-.contact-page.is-active .c-group {
+.contact-page.is-active .i-card {
   opacity: 1;
   transform: translate3d(0, 0, 0);
 }
 
-.c-label {
+.i-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 34px 60px -14px rgba(0, 0, 0, 0.14), 0 10px 20px -8px rgba(0, 0, 0, 0.08);
+  border-color: rgba(17, 17, 17, 0.35);
+}
+
+.i-icon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+}
+
+.i-card .i-label {
   color: var(--label);
   font-size: 10px;
   font-weight: 500;
-  line-height: 1.4;
+  line-height: 1;
   letter-spacing: 0.16em;
   text-transform: uppercase;
+  display: block;
 }
 
-.c-email {
-  position: relative;
-  display: inline-block;
-  max-width: 100%;
+.i-card .i-value {
   color: var(--ink);
-  font-size: clamp(1rem, 2.2vw, 2rem);
+  font-size: clamp(1.05rem, 2.4vw, 1.6rem);
   font-weight: 600;
-  line-height: 1.25;
-  letter-spacing: -0.03em;
-  text-decoration: none;
-  overflow-wrap: anywhere;
-}
-
-.c-email::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -3px;
-  height: 1px;
-  background: currentColor;
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform 400ms var(--ease-out);
-}
-
-.c-email:hover::after {
-  transform: scaleX(1);
-}
-
-.c-link {
-  position: relative;
-  color: var(--ink);
-  font-size: clamp(0.85rem, 1.2vw, 1.05rem);
-  font-weight: 400;
-  line-height: 1.5;
-  text-decoration: none;
-  overflow-wrap: anywhere;
-  transition: opacity 200ms ease;
-}
-
-.c-link::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -4px;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.35;
-  transform: scaleX(0.25);
-  transform-origin: left center;
-  transition:
-    transform 400ms var(--ease-out),
-    opacity 200ms ease;
-}
-
-.c-link:hover {
-  opacity: 0.7;
-}
-
-.c-link:hover::after {
-  opacity: 1;
-  transform: scaleX(1);
-}
-
-.c-body {
-  max-width: 44ch;
-  color: var(--muted);
-  font-size: clamp(12px, 1vw, 14px);
-  font-weight: 300;
-  line-height: 1.7;
-}
-
-.c-roles {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  color: var(--ink-soft);
-  font-size: clamp(12px, 1vw, 14px);
-  font-weight: 300;
-  line-height: 1.7;
-}
-
-.c-quote {
-  max-width: 28ch;
-  color: var(--ink);
-  font-size: clamp(1.15rem, 2vw, 1.7rem);
-  font-weight: 400;
-  line-height: 1.35;
   letter-spacing: -0.02em;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  display: block;
 }
 
-.contact-foot {
-  grid-column: 1 / -1;
-  grid-row: 2;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  min-width: 0;
-}
-
-.contact-copy {
-  color: var(--label);
-  font-size: 9px;
-  font-weight: 500;
-  line-height: 1.4;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  text-align: right;
+.i-card svg {
+  width: 100%;
+  height: 100%;
 }
 
 /* ==========================================================================
@@ -1959,8 +1880,7 @@ ol {
     width: min(32vw, 320px);
   }
 
-  .detail,
-  .contact-page {
+  .detail {
     grid-template-columns: minmax(0, 34%) minmax(0, 1fr);
   }
 
@@ -2530,8 +2450,7 @@ ol {
   }
 
   /* Detail + contact: claw back the vertical space the top padding ate. */
-  .detail,
-  .contact-page {
+  .detail {
     padding-top: max(56px, calc(env(safe-area-inset-top) + 44px));
   }
 
@@ -2539,8 +2458,7 @@ ol {
     padding-bottom: 14px;
   }
 
-  .detail-heading,
-  .contact-heading {
+  .detail-heading {
     font-size: 26px;
   }
 
