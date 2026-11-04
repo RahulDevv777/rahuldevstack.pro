@@ -2055,7 +2055,7 @@ ol {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: safe center;
     gap: clamp(18px, 2.6vh, 28px);
     padding: max(62px, calc(env(safe-area-inset-top) + 44px)) var(--gutter)
       max(30px, calc(env(safe-area-inset-bottom) + 18px));
@@ -2478,46 +2478,16 @@ ol {
 }
 
 /* Landscape phones and short windows: the height is the scarce axis, so the
-   chrome goes compact and the summary moves beside the wheel instead of
-   underneath it. The cards themselves are sized in computeLayout(). */
+   chrome goes compact and the summary gives the wheel the whole screen. The
+   cards themselves are sized in computeLayout(). */
 @media (max-height: 640px) and (orientation: landscape) {
   .band {
     width: 26vw;
   }
 
-  /* A short, right-aligned summary: no copy, no hint, centred vertically in
-     the empty column next to the wheel. */
+  /* No room for a summary beside or below a full-width wheel: the card in the
+     middle already carries its own chip, title and subtitle. */
   .ring-summary {
-    left: auto;
-    right: 3vw;
-    top: 50%;
-    bottom: auto;
-    width: min(30vw, 280px);
-    align-items: flex-end;
-    text-align: right;
-    transform: translateY(-50%);
-  }
-
-  .ring-summary::before {
-    inset: -18px -14px;
-  }
-
-  .ring-summary-inner {
-    gap: 6px;
-    align-items: flex-end;
-  }
-
-  .ring-summary-title {
-    font-size: 13px;
-  }
-
-  .ring-summary-meta {
-    font-size: 8px;
-    letter-spacing: 0.08em;
-  }
-
-  .ring-summary-copy,
-  .ring-summary-hint {
     display: none;
   }
 

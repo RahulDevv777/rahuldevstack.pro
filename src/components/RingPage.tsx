@@ -109,17 +109,17 @@ const computeLayout = (): RingLayout => {
 
   // Landscape with very little height: phones on their side, short windows.
   if (vh <= 640 && vw >= vh) {
-    const cardW = clamp(vh * 0.34, 108, 180);
+    const cardW = clamp(vh * 0.36, 120, 190);
     const u = cardW / CARD_W;
     return {
       u,
       cardW,
       cardH: cardW * 1.32,
-      pad: clamp(20 * u, 9, 20),
+      pad: clamp(20 * u, 10, 20),
       radius: clamp(14 * u, 10, 14),
-      ringR: cardW * 1.7,
-      icon: clamp(48 * u, 30, 44),
-      fs: clamp(16 * u, 10.5, 14),
+      ringR: cardW * 2.2,
+      icon: clamp(48 * u, 32, 46),
+      fs: clamp(16 * u, 11, 14.5),
       pushZ: 40 * u,
       liftY: 34 * u,
       heroScale: 0.05,
