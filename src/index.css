@@ -131,7 +131,7 @@ ol {
 }
 
 #track {
-  will-change: transform;
+  will-change: auto;
 }
 
 .panel {
@@ -1172,6 +1172,12 @@ ol {
   position: absolute;
   inset: 0;
   pointer-events: none;
+}
+
+/* Safari re-blurs every layer on each animated frame: keep two per side. */
+.band div:nth-child(1),
+.band div:nth-child(3) {
+  display: none;
 }
 
 .band-l div:nth-child(1) {

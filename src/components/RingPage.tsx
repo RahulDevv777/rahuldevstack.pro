@@ -174,6 +174,7 @@ export const RingPage = ({
   const focusCardRef = useRef<HTMLButtonElement>(null);
   const hidCardRef = useRef<HTMLElement | null>(null);
   const lastFixRef = useRef(0);
+  const pendMeasureRef = useRef(false);
   const focusOverlayRef = useRef(-1);
   const [focusOverlay, setFocusOverlay] = useState(0);
   const [inView, setInView] = useState(false);
@@ -221,7 +222,8 @@ export const RingPage = ({
       // to the camera on top everywhere.
       element.style.zIndex = String(Math.round(900 - Math.abs(th) * 4));
 
-      let alpha = Math.abs(th) > 150 ? 0.5 : 1;
+      const absTh = Math.abs(th);
+      let alpha = absTh <= 140 ? 1 : absTh >= 165 ? 0.5 : 1 - (0.5 * (absTh - 140)) / 25;
       if (introState.active) {
         const distance = Math.min(
           mod(i - introState.q0, N),
@@ -239,9 +241,9 @@ export const RingPage = ({
     const overlay = focusCardRef.current;
     const bestEl = cardRefs.current[bestIdx] ?? null;
     const dialogOpen = expandedRef.current !== null;
+    const calm = clamp(1 - Math.abs(qTarget.current - q) / 0.12, 0, 1);
     let op = 0;
     if (overlay) {
-      const calm = clamp(1 - Math.abs(qTarget.current - q) / 0.12, 0, 1);
       op = dialogOpen ? 0 : clamp((bf - 0.7) / 0.25, 0, 1) * calm;
       overlay.style.opacity = op.toFixed(3);
       overlay.style.pointerEvents = op > 0.5 ? 'auto' : 'none';
@@ -265,7 +267,12 @@ export const RingPage = ({
       hidCardRef.current = bestEl;
       bestEl.style.visibility = 'hidden';
     }
-    if (bestIdx !== focusOverlayRef.current) {
+    // A measurement taken mid-spin snaps the ring for one frame: defer it.
+    if (pendMeasureRef.current && Math.abs(qTarget.current - q) <= 0.01) {
+      pendMeasureRef.current = false;
+      placeFocusCard();
+    }
+    if (bestIdx !== focusOverlayRef.current && calm > 0.3) {
       focusOverlayRef.current = bestIdx;
       setFocusOverlay(bestIdx);
     }
@@ -295,6 +302,12 @@ export const RingPage = ({
 
   // Size and place the flat overlay from the real 3D card.
   const placeFocusCard = useCallback(() => {
+    // Never measure while the ring is moving — it would snap the whole ring
+    // for a frame. Defer until the wheel has settled.
+    if (Math.abs(qTarget.current - qDisplay.current) > 0.01) {
+      pendMeasureRef.current = true;
+      return;
+    }
     const overlay = focusCardRef.current;
     const section = sectionRef.current;
     if (!overlay || !section) return;
@@ -432,7 +445,12 @@ export const RingPage = ({
       }
 
       const nextFocus = mod(Math.round(qDisplay.current), N);
-      if (nextFocus !== focusIndexRef.current) {
+      // The summary and counter slide up on every change: only update them
+      // once the wheel has settled.
+      if (
+        nextFocus !== focusIndexRef.current &&
+        Math.abs(qTarget.current - qDisplay.current) <= 0.012
+      ) {
         focusIndexRef.current = nextFocus;
         setFocusIndex(nextFocus);
       }
@@ -480,8 +498,6 @@ export const RingPage = ({
       lastAdvance.current = now;
       qTarget.current = q0;
       intro.current = { active: false, t0: 0, q0 };
-      // Re-measure once the page slide has settled.
-      window.setTimeout(() => placeFocusCard(), 950);
 
       if (reducedRef.current) {
         qDisplay.current = q0;
