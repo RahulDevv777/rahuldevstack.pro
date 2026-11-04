@@ -175,6 +175,7 @@ export const RingPage = ({
   const hidCardRef = useRef<HTMLElement | null>(null);
   const lastFixRef = useRef(0);
   const pendMeasureRef = useRef(false);
+  const settledRef = useRef(false);
   const focusOverlayRef = useRef(-1);
   const [focusOverlay, setFocusOverlay] = useState(0);
   const [inView, setInView] = useState(false);
@@ -241,10 +242,19 @@ export const RingPage = ({
     const overlay = focusCardRef.current;
     const bestEl = cardRefs.current[bestIdx] ?? null;
     const dialogOpen = expandedRef.current !== null;
-    const calm = clamp(1 - Math.abs(qTarget.current - q) / 0.12, 0, 1);
+    // The twin only replaces the real card once the wheel has come to rest,
+    // and it snaps in instead of crossfading. The crossfade at the middle was
+    // what made the front card look like it was blinking.
+    const settled = Math.abs(qTarget.current - q) <= 0.012;
+    if (settled && !settledRef.current) {
+      settledRef.current = true;
+      placeFocusCard();
+    } else if (!settled) {
+      settledRef.current = false;
+    }
     let op = 0;
     if (overlay) {
-      op = dialogOpen ? 0 : clamp((bf - 0.7) / 0.25, 0, 1) * calm;
+      op = dialogOpen || !settled ? 0 : 1;
       overlay.style.opacity = op.toFixed(3);
       overlay.style.pointerEvents = op > 0.5 ? 'auto' : 'none';
       overlay.style.visibility = op > 0.001 ? 'visible' : 'hidden';
@@ -272,7 +282,7 @@ export const RingPage = ({
       pendMeasureRef.current = false;
       placeFocusCard();
     }
-    if (bestIdx !== focusOverlayRef.current && calm > 0.3) {
+    if (bestIdx !== focusOverlayRef.current) {
       focusOverlayRef.current = bestIdx;
       setFocusOverlay(bestIdx);
     }

@@ -1074,7 +1074,7 @@ ol {
   text-align: left;
   transform-origin: 0 0;
   opacity: 0;
-  transition: opacity 180ms linear;
+  transition: none;
   pointer-events: none;
   cursor: pointer;
   outline: none;
