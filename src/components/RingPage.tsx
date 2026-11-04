@@ -170,11 +170,9 @@ export const RingPage = ({
   const [expanded, setExpanded] = useState<number | null>(null);
   const [expandedClosing, setExpandedClosing] = useState(false);
 
-  // Flat 2D twin of the front card (see #focus-card in index.css).
+  // Twin of the front card (see #focus-card in index.css).
   const focusCardRef = useRef<HTMLButtonElement>(null);
   const hidCardRef = useRef<HTMLElement | null>(null);
-  const lastFixRef = useRef(0);
-  const pendMeasureRef = useRef(false);
   const settledRef = useRef(false);
   const focusOverlayRef = useRef(-1);
   const [focusOverlay, setFocusOverlay] = useState(0);
@@ -237,50 +235,38 @@ export const RingPage = ({
       element.style.opacity = alpha.toFixed(3);
     }
 
-    // The front card is mirrored by a flat 2D overlay so nothing in the 3D
-    // stack can ever paint across it. It fades in on arrival, out on departure.
+    // The twin is a duplicate card living inside the ring itself: it copies
+    // the front card's transform, so it renders pixel-identically to it. It
+    // only comes alive once the wheel has come to rest, which means there is
+    // nothing to see when the card arrives: no crossfade, no geometry change.
     const overlay = focusCardRef.current;
     const bestEl = cardRefs.current[bestIdx] ?? null;
     const dialogOpen = expandedRef.current !== null;
-    // The twin only replaces the real card once the wheel has come to rest,
-    // and it snaps in instead of crossfading. The crossfade at the middle was
-    // what made the front card look like it was blinking.
-    const settled = Math.abs(qTarget.current - q) <= 0.012;
-    if (settled && !settledRef.current) {
-      settledRef.current = true;
-      placeFocusCard();
-    } else if (!settled) {
+    const gap = Math.abs(qTarget.current - q);
+
+    // Hysteresis, so a wobble in the settling maths can never blink the card.
+    if (!settledRef.current) {
+      if (gap <= 0.004) settledRef.current = true;
+    } else if (gap > 0.02) {
       settledRef.current = false;
     }
-    let op = 0;
+
+    const live = settledRef.current && !dialogOpen;
     if (overlay) {
-      op = dialogOpen || !settled ? 0 : 1;
-      overlay.style.opacity = op.toFixed(3);
-      overlay.style.pointerEvents = op > 0.5 ? 'auto' : 'none';
-      overlay.style.visibility = op > 0.001 ? 'visible' : 'hidden';
+      if (live && bestEl) overlay.style.transform = bestEl.style.transform;
+      overlay.style.opacity = live ? '1' : '0';
+      overlay.style.visibility = live ? 'visible' : 'hidden';
+      overlay.style.pointerEvents = live ? 'auto' : 'none';
     }
-    // An opaque flat twin hides the real 3D card, so its tilted neighbours
-    // can never form a ridge around the flat copy — but only once the twin is
-    // verified to sit exactly on top of it, never leaving the middle empty.
-    const live = !dialogOpen;
-    const okPos = op >= 0.99 && live && aligned(bestEl);
-    if (op >= 0.99 && live && !okPos && performance.now() - lastFixRef.current > 250) {
-      lastFixRef.current = performance.now();
-      placeFocusCard();
-      requestAnimationFrame(() => renderRing(performance.now()));
-    }
-    if (hidCardRef.current && (!okPos || hidCardRef.current !== bestEl)) {
+    // The twin covers the real card, so hide it — two identical boxes at the
+    // same depth would otherwise fight over the same pixels.
+    if (hidCardRef.current && (!live || hidCardRef.current !== bestEl)) {
       hidCardRef.current.style.visibility = '';
       hidCardRef.current = null;
     }
-    if (okPos && !hidCardRef.current && bestEl) {
+    if (live && bestEl && hidCardRef.current !== bestEl) {
       hidCardRef.current = bestEl;
       bestEl.style.visibility = 'hidden';
-    }
-    // A measurement taken mid-spin snaps the ring for one frame: defer it.
-    if (pendMeasureRef.current && Math.abs(qTarget.current - q) <= 0.01) {
-      pendMeasureRef.current = false;
-      placeFocusCard();
     }
     if (bestIdx !== focusOverlayRef.current) {
       focusOverlayRef.current = bestIdx;
@@ -288,89 +274,12 @@ export const RingPage = ({
     }
   }, []);
 
-  // Size and place the flat overlay from the real 3D card. A measurement that
-  // cannot be trusted must never leave the flat card unplaced: fall back to the
-  // geometry so the middle of the ring is always covered.
-  const expected = useCallback(() => {
-    const section = sectionRef.current;
-    const U = layoutRef.current.u;
-    const W = section?.clientWidth ?? window.innerWidth;
-    const H = section?.clientHeight ?? window.innerHeight;
-    const a = (-11 * Math.PI) / 180;
-    const y = -120 * U;
-    const z = (560 + 215) * U;
-    const yy = y * Math.cos(a) - z * Math.sin(a);
-    const zz = y * Math.sin(a) + z * Math.cos(a);
-    const k = 2600 / (2600 - zz);
-    return {
-      cx: W / 2,
-      cy: H * 0.33 + (H * 0.09 + yy) * k,
-      w: 250 * 1.1 * U * k,
-      h: 330 * 1.1 * U * k,
-    };
-  }, []);
-
-  // Size and place the flat overlay from the real 3D card.
-  const placeFocusCard = useCallback(() => {
-    // Never measure while the ring is moving — it would snap the whole ring
-    // for a frame. Defer until the wheel has settled.
-    if (Math.abs(qTarget.current - qDisplay.current) > 0.01) {
-      pendMeasureRef.current = true;
-      return;
-    }
-    const overlay = focusCardRef.current;
-    const section = sectionRef.current;
-    if (!overlay || !section) return;
-
-    // The front-most card sits at the ring's front no matter how far the
-    // wheel has turned, so its box is the resting box.
-    const front = cardRefs.current[mod(Math.round(qDisplay.current), N)];
-    const r = front?.getBoundingClientRect();
-    const srect = section.getBoundingClientRect();
-    const e = expected();
-
-    const ok =
-      Boolean(r) &&
-      (r as DOMRect).width > 120 &&
-      (r as DOMRect).height > 120 &&
-      Math.abs((r as DOMRect).width / e.w - 1) < 0.2 &&
-      Math.abs((r as DOMRect).height / e.h - 1) < 0.2;
-
-    const W = ok ? (r as DOMRect).width : e.w;
-    const Hh = ok ? (r as DOMRect).height : e.h;
-    const L = ok ? (r as DOMRect).left - srect.left : e.cx - W / 2;
-    const T = ok ? (r as DOMRect).top - srect.top : e.cy - Hh / 2;
-    const s = W / 250;
-
-    overlay.style.left = `${L.toFixed(2)}px`;
-    overlay.style.top = `${T.toFixed(2)}px`;
-    overlay.style.width = '250px';
-    overlay.style.height = `${(Hh / s).toFixed(2)}px`;
-    overlay.style.transform = `scale(${s.toFixed(4)})`;
-  }, [expected]);
-
-  // The flat twin may only replace the real card when the boxes match.
-  const aligned = useCallback((el: HTMLElement | null) => {
-    const overlay = focusCardRef.current;
-    if (!overlay || !el) return false;
-    const a = overlay.getBoundingClientRect();
-    const b = el.getBoundingClientRect();
-    return (
-      a.width > 120 &&
-      Math.abs(a.left - b.left) < 6 &&
-      Math.abs(a.top - b.top) < 6 &&
-      Math.abs(a.width - b.width) < 6 &&
-      Math.abs(a.height - b.height) < 6
-    );
-  }, []);
-
   useLayoutEffect(() => {
     const raf = requestAnimationFrame(() => {
       renderRing(performance.now());
-      placeFocusCard();
     });
     return () => cancelAnimationFrame(raf);
-  }, [active, inView, layout, placeFocusCard, renderRing]);
+  }, [active, inView, expanded, layout, renderRing]);
 
   // Only mirror the ring while the ring page is actually on screen.
   useEffect(() => {
@@ -494,9 +403,8 @@ export const RingPage = ({
       renderRing(performance.now());
     };
     window.addEventListener('resize', measure);
-    document.fonts?.ready.then(() => placeFocusCard()).catch(() => undefined);
     return () => window.removeEventListener('resize', measure);
-  }, [placeFocusCard, renderRing]);
+  }, [renderRing]);
 
   // Entering the page: the ring spins into place and the cards fade in.
   const previousActive = useRef(false);
@@ -527,11 +435,12 @@ export const RingPage = ({
       }
     }
     previousActive.current = active;
-  }, [active, placeFocusCard, renderRing, startTween]);
+  }, [active, renderRing, startTween]);
 
-  // The real front card must come back whenever the flat twin is not live
+  // The real front card must come back whenever the twin is not live
   // (dialog open, other page, unmount).
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (active && inView && expanded === null) return;
     if (hidCardRef.current) {
       hidCardRef.current.style.visibility = '';
       hidCardRef.current = null;
@@ -798,6 +707,47 @@ export const RingPage = ({
                 </button>
               );
             })}
+
+            {/* Twin of the front card: same markup and same transform as the
+                card it covers, so replacing that card with this copy is not
+                visible. It is hidden while the wheel turns. */}
+            {active && inView && expanded === null ? (
+              <button
+                type="button"
+                id="focus-card"
+                ref={focusCardRef}
+                className="rc card-face"
+                tabIndex={-1}
+                aria-hidden="true"
+                style={
+                  {
+                    width: layout.cardW,
+                    height: layout.cardH,
+                    marginLeft: -layout.cardW / 2,
+                    marginTop: -layout.cardH / 2,
+                    padding: layout.pad,
+                    borderRadius: layout.radius,
+                    fontSize: layout.fs,
+                    '--card-bg': assetColor(focusOverlay).bg,
+                    '--card-ink': assetColor(focusOverlay).text,
+                    '--w': '0.0000',
+                  } as CSSProperties
+                }
+                onClick={() => openExpanded(focusOverlay)}
+                onPointerEnter={() => {
+                  if (focusOverlay === focusIndexRef.current) {
+                    autoPaused.current = true;
+                  }
+                }}
+                onPointerLeave={() => {
+                  if (focusOverlay === focusIndexRef.current) {
+                    autoPaused.current = false;
+                  }
+                }}
+              >
+                <CardFace card={ASSETS[focusOverlay]} icon={layout.icon} />
+              </button>
+            ) : null}
           </div>
         </div>
 
@@ -849,29 +799,6 @@ export const RingPage = ({
           </svg>
         </button>
       </section>
-
-      {active && inView && expanded === null
-        ? createPortal(
-            <button
-              type="button"
-              id="focus-card"
-              ref={focusCardRef}
-              className="card-face"
-              tabIndex={-1}
-              aria-hidden="true"
-              style={
-                {
-                  '--card-bg': assetColor(focusOverlay).bg,
-                  '--card-ink': assetColor(focusOverlay).text,
-                } as CSSProperties
-              }
-              onClick={() => openExpanded(focusOverlay)}
-            >
-              <CardFace card={ASSETS[focusOverlay]} icon={48} />
-            </button>,
-            sectionRef.current!,
-          )
-        : null}
 
       {expanded !== null
         ? createPortal(
