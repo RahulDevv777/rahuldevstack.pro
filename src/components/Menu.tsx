@@ -119,6 +119,14 @@ export const Menu = ({
   const activeRef = useRef(active);
   activeRef.current = active;
 
+  // Reset scroll hint when menu deactivates.
+  useEffect(() => {
+    if (!active) {
+      hasScrolledRef.current = false;
+      setHasScrolled(false);
+    }
+  }, [active]);
+
   const markScrolled = useCallback(() => {
     if (hasScrolledRef.current) return;
     hasScrolledRef.current = true;

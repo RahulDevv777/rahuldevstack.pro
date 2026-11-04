@@ -132,6 +132,7 @@ export const RingPage = ({
 }: RingPageProps) => {
   const sectionRef = useRef<HTMLElement>(null);
   const cardRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const ringSectionRef = useRef<HTMLElement>(null);
   const [layout, setLayout] = useState<RingLayout>(computeLayout);
   const layoutRef = useRef(layout);
   layoutRef.current = layout;
@@ -157,6 +158,7 @@ export const RingPage = ({
   const dragLast = useRef(0);
   const snapTimer = useRef(0);
   const suppressClick = useRef(false);
+  const suppressClickTimer = useRef<number>(0);
   const activeRef = useRef(active);
   activeRef.current = active;
   const reduced = useReducedMotion();
@@ -283,8 +285,8 @@ export const RingPage = ({
       return;
     }
     const observer = new IntersectionObserver(
-      (entries) => setInView(entries[0].intersectionRatio > 0.4),
-      { threshold: [0, 0.4, 1] },
+      (entries) => setInView(entries[0].intersectionRatio >= 0.4),
+      { threshold: [0.4] },
     );
     observer.observe(element);
     return () => observer.disconnect();
@@ -494,7 +496,8 @@ export const RingPage = ({
       lastInteraction.current = performance.now();
       if (dragMoved.current) {
         suppressClick.current = true;
-        window.setTimeout(() => {
+        window.clearTimeout(suppressClickTimer.current);
+        suppressClickTimer.current = window.setTimeout(() => {
           suppressClick.current = false;
         }, 360);
         startTween(Math.round(qTarget.current), 700, easeOut, { user: true });
@@ -512,6 +515,7 @@ export const RingPage = ({
       window.removeEventListener('pointerup', endDrag);
       window.removeEventListener('pointercancel', endDrag);
       section.classList.remove('is-dragging');
+      window.clearTimeout(suppressClickTimer.current);
     };
   }, [active, startTween]);
 
@@ -755,7 +759,7 @@ export const RingPage = ({
             >
               <CardFace card={ASSETS[focusOverlay]} icon={48} />
             </button>,
-            document.body,
+            ringSectionRef.current!,
           )
         : null}
 
@@ -772,7 +776,7 @@ export const RingPage = ({
               onClose={closeExpanded}
               icon={layout.icon * 1.6}
             />,
-            document.body,
+            ringSectionRef.current!,
           )
         : null}
     </>

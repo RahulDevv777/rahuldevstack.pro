@@ -127,7 +127,7 @@ export const Detail = ({
         const scale = Math.min(src.width / dest.width, src.height / dest.height);
         const dx = src.left + src.width / 2 - (dest.left + dest.width / 2);
         const dy = src.top + src.height / 2 - (dest.top + dest.height / 2);
-        heading.style.transition = `transform 900ms ${cinematicCss}`;
+        heading.style.transition = 'transform 900ms cubic-bezier(0.76, 0, 0.24, 1)';
         heading.style.transform = `translate3d(${dx.toFixed(2)}px, ${dy.toFixed(2)}px, 0) scale(${scale.toFixed(4)})`;
       }
     }
@@ -222,6 +222,3 @@ export const Detail = ({
     </div>
   );
 };
-
-// Kept as a string so the inline transition matches the PRD curve exactly.
-const cinematicCss = 'cubic-bezier(0.76, 0, 0.24, 1)';
