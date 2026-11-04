@@ -172,6 +172,7 @@ export const RingPage = ({
 
   // Flat 2D twin of the front card (see #focus-card in index.css).
   const focusCardRef = useRef<HTMLButtonElement>(null);
+  const hidCardRef = useRef<HTMLElement | null>(null);
   const focusOverlayRef = useRef(-1);
   const [focusOverlay, setFocusOverlay] = useState(0);
   const [inView, setInView] = useState(false);
@@ -235,11 +236,25 @@ export const RingPage = ({
     // The front card is mirrored by a flat 2D overlay so nothing in the 3D
     // stack can ever paint across it. It fades in on arrival, out on departure.
     const overlay = focusCardRef.current;
+    const bestEl = cardRefs.current[bestIdx] ?? null;
+    const dialogOpen = expandedRef.current !== null;
+    let op = 0;
     if (overlay) {
       const calm = clamp(1 - Math.abs(qTarget.current - q) / 0.12, 0, 1);
-      const a = clamp((bf - 0.7) / 0.25, 0, 1) * calm;
-      overlay.style.opacity = a.toFixed(3);
-      overlay.style.pointerEvents = a > 0.5 ? 'auto' : 'none';
+      op = dialogOpen ? 0 : clamp((bf - 0.7) / 0.25, 0, 1) * calm;
+      overlay.style.opacity = op.toFixed(3);
+      overlay.style.pointerEvents = op > 0.5 ? 'auto' : 'none';
+      overlay.style.visibility = op > 0.001 ? 'visible' : 'hidden';
+    }
+    // An opaque flat twin hides the real 3D card, so its tilted neighbours
+    // can never form a ridge around the flat copy.
+    if (hidCardRef.current && (op < 0.99 || hidCardRef.current !== bestEl)) {
+      hidCardRef.current.style.visibility = '';
+      hidCardRef.current = null;
+    }
+    if (op >= 0.99 && overlay && !hidCardRef.current && bestEl) {
+      hidCardRef.current = bestEl;
+      bestEl.style.visibility = 'hidden';
     }
     if (bestIdx !== focusOverlayRef.current) {
       focusOverlayRef.current = bestIdx;
@@ -260,6 +275,8 @@ export const RingPage = ({
 
     const r = front.getBoundingClientRect();
     if (r.width <= 0 || r.height <= 0) return;
+    // A bad measure (mid-move, mid-slide) must never resize the flat card.
+    if (r.width < 120 || r.height < 120) return;
 
     const section = sectionRef.current;
     if (!section) return;
@@ -398,8 +415,9 @@ export const RingPage = ({
       renderRing(performance.now());
     };
     window.addEventListener('resize', measure);
+    document.fonts?.ready.then(() => placeFocusCard()).catch(() => undefined);
     return () => window.removeEventListener('resize', measure);
-  }, [renderRing]);
+  }, [placeFocusCard, renderRing]);
 
   // Entering the page: the ring spins into place and the cards fade in.
   const previousActive = useRef(false);
@@ -411,6 +429,8 @@ export const RingPage = ({
       lastAdvance.current = now;
       qTarget.current = q0;
       intro.current = { active: false, t0: 0, q0 };
+      // Re-measure once the page slide has settled.
+      window.setTimeout(() => placeFocusCard(), 950);
 
       if (reducedRef.current) {
         qDisplay.current = q0;
@@ -430,7 +450,16 @@ export const RingPage = ({
       }
     }
     previousActive.current = active;
-  }, [active, renderRing, startTween]);
+  }, [active, placeFocusCard, renderRing, startTween]);
+
+  // The real front card must come back whenever the flat twin is not live
+  // (dialog open, other page, unmount).
+  useEffect(() => {
+    if (hidCardRef.current) {
+      hidCardRef.current.style.visibility = '';
+      hidCardRef.current = null;
+    }
+  }, [active, inView, expanded]);
 
   // Wheel rotation.
   useEffect(() => {
@@ -780,7 +809,9 @@ export const RingPage = ({
               onClose={closeExpanded}
               icon={layout.icon * 1.6}
             />,
-            sectionRef.current!,
+            // The dialog must be positioned against the real viewport, not the
+            // transformed page track it used to be mounted in.
+            document.body,
           )
         : null}
     </>
