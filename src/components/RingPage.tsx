@@ -27,7 +27,6 @@ import {
 } from '../lib/motion';
 
 const N = ASSETS.length;
-const MOBILE_QUERY = '(max-width: 720px)';
 
 // Ring spacing. Cards sit 360/N apart; the card that reaches the front gets a
 // little extra room on both sides, and that extra angle is paid back evenly
@@ -52,52 +51,136 @@ interface RingLayout {
   ringR: number;
   icon: number;
   fs: number;
+  /** How far the front card is pushed towards the camera. */
+  pushZ: number;
+  /** How far it rises out of the wheel. */
+  liftY: number;
+  /** Extra scale on top of the push. */
+  heroScale: number;
   mobile: boolean;
 }
 
+const CARD_W = 250;
+const CARD_H = 330;
+
+/**
+ * The ring is measured against the panel it lives in, not the raw window: on
+ * phones `#viewport` is sized in `svh`, so the toolbar sliding away must not
+ * resize the cards.
+ */
+const panelHeight = () => {
+  const panel = typeof document === 'undefined'
+    ? null
+    : document.getElementById('viewport');
+  return panel?.clientHeight || window.innerHeight;
+};
+
+/**
+ * Four explicit classes instead of one scale factor, so every aspect ratio gets
+ * a layout that was actually designed for it:
+ *
+ *  - short  : landscape phones and short windows. Height is the scarce axis,
+ *             so the cards are sized from it and the ring stops throwing the
+ *             front card at the camera.
+ *  - phone  : one handed portrait. A little over half the screen per card.
+ *  - tablet : iPad portrait/landscape and small laptops. Big cards, wide ring.
+ *  - desktop: the 1440x900 reference, scaled exactly as it always was.
+ */
 const computeLayout = (): RingLayout => {
   if (typeof window === 'undefined') {
     return {
       u: 1,
-      cardW: 250,
-      cardH: 330,
+      cardW: CARD_W,
+      cardH: CARD_H,
       pad: 20,
       radius: 14,
       ringR: 560,
       icon: 48,
       fs: 16,
+      pushZ: 215,
+      liftY: 120,
+      heroScale: 0.1,
       mobile: false,
     };
   }
 
   const vw = window.innerWidth;
-  const vh = window.innerHeight;
+  const vh = panelHeight();
 
-  if (window.matchMedia(MOBILE_QUERY).matches) {
-    const cardW = clamp(vw * 0.52, 168, 216);
+  // Landscape with very little height: phones on their side, short windows.
+  if (vh <= 640 && vw >= vh) {
+    const cardW = clamp(vh * 0.34, 108, 180);
+    const u = cardW / CARD_W;
     return {
-      u: cardW / 250,
+      u,
       cardW,
       cardH: cardW * 1.32,
-      pad: 16,
-      radius: 13,
-      ringR: 330,
-      icon: 40,
-      fs: 13,
+      pad: clamp(20 * u, 9, 20),
+      radius: clamp(14 * u, 10, 14),
+      ringR: cardW * 1.7,
+      icon: clamp(48 * u, 30, 44),
+      fs: clamp(16 * u, 10.5, 14),
+      pushZ: 40 * u,
+      liftY: 34 * u,
+      heroScale: 0.05,
       mobile: true,
+    };
+  }
+
+  if (vw <= 720) {
+    const cardW = clamp(Math.min(vw * 0.52, vh * 0.42), 168, 216);
+    const u = cardW / CARD_W;
+    // A square-ish window has no room for the full hero push.
+    const hero = clamp((vh - 380) / 300, 0.55, 1);
+    return {
+      u,
+      cardW,
+      cardH: cardW * 1.32,
+      pad: clamp(20 * u, 14, 20),
+      radius: clamp(14 * u, 12, 15),
+      ringR: 330,
+      icon: clamp(48 * u, 36, 44),
+      fs: clamp(16 * u, 12.5, 16),
+      pushZ: 215 * u * hero,
+      liftY: 120 * u * hero,
+      heroScale: 0.1 * hero,
+      mobile: true,
+    };
+  }
+
+  // iPad portrait and landscape, small laptop screens.
+  if (vw <= 1100) {
+    const cardW = clamp(Math.min(vw * 0.36, vh * 0.3), 176, 260);
+    const u = cardW / CARD_W;
+    return {
+      u,
+      cardW,
+      cardH: cardW * 1.32,
+      pad: clamp(20 * u, 13, 20),
+      radius: clamp(14 * u, 12, 16),
+      ringR: clamp(cardW * 2.1, 400, 620),
+      icon: clamp(48 * u, 34, 52),
+      fs: clamp(16 * u, 12, 16.6),
+      pushZ: 215 * u,
+      liftY: 120 * u,
+      heroScale: 0.1,
+      mobile: false,
     };
   }
 
   const u = Math.min(vw / 1440, vh / 900, 1.35);
   return {
     u,
-    cardW: 250 * u,
-    cardH: 330 * u,
+    cardW: CARD_W * u,
+    cardH: CARD_H * u,
     pad: 20 * u,
     radius: 14 * u,
     ringR: 560 * u,
     icon: 48 * u,
     fs: 16 * u,
+    pushZ: 215 * u,
+    liftY: 120 * u,
+    heroScale: 0.1,
     mobile: false,
   };
 };
@@ -216,9 +299,9 @@ export const RingPage = ({
       // The focused card has to sit far enough forward that the tilted
       // neighbours (their outer edges swing forward by half a card width)
       // can never cut through it.
-      const z = current.ringR + focus * 215 * current.u;
-      const lift = -focus * 120 * current.u;
-      const scale = 1 + focus * 0.1;
+      const z = current.ringR + focus * current.pushZ;
+      const lift = -focus * current.liftY;
+      const scale = 1 + focus * current.heroScale;
 
       element.style.transform =
         `rotateY(${th2.toFixed(3)}deg) translateZ(${z.toFixed(2)}px) ` +
@@ -405,15 +488,22 @@ export const RingPage = ({
     return unsubscribe;
   }, [renderRing, startTween]);
 
-  // Measure on resize.
+  // Measure on mount and on resize (rotation, window drag, iPad split view).
   useEffect(() => {
     const measure = () => {
       const next = computeLayout();
       setLayout(next);
       renderRing(performance.now());
     };
+    // The first paint happens before the panel is measurable on phones, where
+    // the height comes from `svh` rather than the window.
+    measure();
     window.addEventListener('resize', measure);
-    return () => window.removeEventListener('resize', measure);
+    window.addEventListener('orientationchange', measure);
+    return () => {
+      window.removeEventListener('resize', measure);
+      window.removeEventListener('orientationchange', measure);
+    };
   }, [renderRing]);
 
   // Entering the page: the ring spins into place and the cards fade in.

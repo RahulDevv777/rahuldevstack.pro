@@ -1970,6 +1970,137 @@ ol {
   }
 }
 
+/* Tablets and small laptops (iPad in both orientations, 1024x768 windows).
+   The ring itself is sized in computeLayout(); this keeps the chrome — edge
+   fades, summary, counters — in proportion with the bigger cards. */
+@media (min-width: 721px) and (max-width: 1100px) {
+  :root {
+    --gutter: clamp(22px, 4vw, 44px);
+  }
+
+  /* Never let the edge fade reach the front card. */
+  .band {
+    width: min(26vw, calc(50% - 215px));
+  }
+
+  .ring-summary {
+    right: 3vw;
+    bottom: 10vh;
+    width: min(30vw, 300px);
+  }
+
+  .ring-summary-title {
+    font-size: clamp(1rem, 1.9vw, 1.35rem);
+  }
+
+  .ring-summary-copy {
+    font-size: clamp(11px, 1.3vw, 13px);
+    -webkit-line-clamp: 3;
+  }
+
+  .ring-summary-hint {
+    font-size: 8.5px;
+  }
+
+  .menu-caption {
+    width: 128px;
+    font-size: 9px;
+  }
+}
+
+/* Portrait tablets: the summary goes under the wheel, like it does on a phone,
+   because there is no room for a side column next to a 260px card. */
+@media (min-width: 721px) and (max-width: 1100px) and (orientation: portrait) {
+  .ring-summary {
+    left: var(--gutter);
+    right: var(--gutter);
+    bottom: calc(max(26px, calc(env(safe-area-inset-bottom) + 12px)) + 54px);
+    width: auto;
+    align-items: center;
+    text-align: center;
+  }
+
+  .ring-summary::before {
+    inset: -18px -12px;
+  }
+
+  .ring-summary-inner {
+    align-items: center;
+  }
+
+  .ring-summary-copy {
+    max-width: 54ch;
+  }
+
+  .ring-summary-hint {
+    display: none;
+  }
+
+  .ring-counter {
+    left: var(--gutter);
+  }
+
+  .ring-contact {
+    left: auto;
+    right: var(--gutter);
+    transform: none;
+  }
+
+  .ring-contact:active {
+    transform: scale(0.97);
+  }
+
+  /* Expanded card: stacked, card on top, details under it. */
+  .rx {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: clamp(18px, 2.6vh, 28px);
+    padding: max(62px, calc(env(safe-area-inset-top) + 44px)) var(--gutter)
+      max(30px, calc(env(safe-area-inset-bottom) + 18px));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .rx-backdrop {
+    display: none;
+  }
+
+  .rx-card-slot {
+    flex: 0 0 auto;
+    width: 100%;
+    height: min(42vh, 460px);
+    min-height: 300px;
+  }
+
+  .rx-card {
+    height: 100%;
+    max-height: 460px;
+    min-height: 300px;
+    border-radius: 18px;
+  }
+
+  .rx-panel {
+    width: 100%;
+    max-height: none;
+    padding-bottom: 12px;
+  }
+
+  .rx-panel-scroll {
+    max-height: none;
+    overflow: visible;
+    padding-right: 0;
+  }
+
+  .rx-close {
+    position: fixed;
+    top: max(16px, calc(env(safe-area-inset-top) + 8px));
+    right: var(--gutter);
+  }
+}
+
 @media (max-width: 720px) {
   :root {
     --gutter: 20px;
@@ -2108,7 +2239,8 @@ ol {
 
   /* Ring */
   .band {
-    width: 26vw;
+    /* Keep the fade in the gutter: the card fills most of a phone screen. */
+    width: 13vw;
   }
 
   .ring-summary {
@@ -2341,6 +2473,108 @@ ol {
   }
 
   .ring-summary-copy {
+    display: none;
+  }
+}
+
+/* Landscape phones and short windows: the height is the scarce axis, so the
+   chrome goes compact and the summary moves beside the wheel instead of
+   underneath it. The cards themselves are sized in computeLayout(). */
+@media (max-height: 640px) and (orientation: landscape) {
+  .band {
+    width: 26vw;
+  }
+
+  /* A short, right-aligned summary: no copy, no hint, centred vertically in
+     the empty column next to the wheel. */
+  .ring-summary {
+    left: auto;
+    right: 3vw;
+    top: 50%;
+    bottom: auto;
+    width: min(30vw, 280px);
+    align-items: flex-end;
+    text-align: right;
+    transform: translateY(-50%);
+  }
+
+  .ring-summary::before {
+    inset: -18px -14px;
+  }
+
+  .ring-summary-inner {
+    gap: 6px;
+    align-items: flex-end;
+  }
+
+  .ring-summary-title {
+    font-size: 13px;
+  }
+
+  .ring-summary-meta {
+    font-size: 8px;
+    letter-spacing: 0.08em;
+  }
+
+  .ring-summary-copy,
+  .ring-summary-hint {
+    display: none;
+  }
+
+  .ring-counter {
+    bottom: max(12px, calc(env(safe-area-inset-bottom) + 6px));
+    font-size: 9px;
+  }
+
+  .ring-contact {
+    bottom: max(12px, calc(env(safe-area-inset-bottom) + 6px));
+    padding: 8px 12px;
+    font-size: 8px;
+  }
+
+  .ring-contact svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  /* Seven menu headings still have to fit in ~390px of height. */
+  .menu-item {
+    font-size: clamp(1.7rem, 6.6vw, 3.2rem);
+  }
+
+  .menu-item[data-menu-heading='education'] {
+    font-size: clamp(1.5rem, 5.6vw, 2.8rem);
+  }
+
+  .menu-teaser {
+    top: calc(50% + 2rem);
+  }
+
+  .menu-reveal {
+    top: calc(50% + 4.2rem);
+  }
+
+  .menu-caption {
+    bottom: max(10px, calc(env(safe-area-inset-bottom) + 4px));
+    font-size: 8px;
+  }
+
+  /* Detail + contact: claw back the vertical space the top padding ate. */
+  .detail,
+  .contact-page {
+    padding-top: max(56px, calc(env(safe-area-inset-top) + 44px));
+  }
+
+  .detail-head {
+    padding-bottom: 14px;
+  }
+
+  .detail-heading,
+  .contact-heading {
+    font-size: 26px;
+  }
+
+  .c-quote {
     display: none;
   }
 }
