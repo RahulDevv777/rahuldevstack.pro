@@ -173,6 +173,7 @@ export const RingPage = ({
   // Flat 2D twin of the front card (see #focus-card in index.css).
   const focusCardRef = useRef<HTMLButtonElement>(null);
   const hidCardRef = useRef<HTMLElement | null>(null);
+  const lastFixRef = useRef(0);
   const focusOverlayRef = useRef(-1);
   const [focusOverlay, setFocusOverlay] = useState(0);
   const [inView, setInView] = useState(false);
@@ -247,12 +248,20 @@ export const RingPage = ({
       overlay.style.visibility = op > 0.001 ? 'visible' : 'hidden';
     }
     // An opaque flat twin hides the real 3D card, so its tilted neighbours
-    // can never form a ridge around the flat copy.
-    if (hidCardRef.current && (op < 0.99 || hidCardRef.current !== bestEl)) {
+    // can never form a ridge around the flat copy — but only once the twin is
+    // verified to sit exactly on top of it, never leaving the middle empty.
+    const live = !dialogOpen;
+    const okPos = op >= 0.99 && live && aligned(bestEl);
+    if (op >= 0.99 && live && !okPos && performance.now() - lastFixRef.current > 250) {
+      lastFixRef.current = performance.now();
+      placeFocusCard();
+      requestAnimationFrame(() => renderRing(performance.now()));
+    }
+    if (hidCardRef.current && (!okPos || hidCardRef.current !== bestEl)) {
       hidCardRef.current.style.visibility = '';
       hidCardRef.current = null;
     }
-    if (op >= 0.99 && overlay && !hidCardRef.current && bestEl) {
+    if (okPos && !hidCardRef.current && bestEl) {
       hidCardRef.current = bestEl;
       bestEl.style.visibility = 'hidden';
     }
@@ -262,32 +271,74 @@ export const RingPage = ({
     }
   }, []);
 
-  // Size and place the flat overlay from the real 3D card. Init and resize
-  // only — never inside the animation frame loop.
+  // Size and place the flat overlay from the real 3D card. A measurement that
+  // cannot be trusted must never leave the flat card unplaced: fall back to the
+  // geometry so the middle of the ring is always covered.
+  const expected = useCallback(() => {
+    const section = sectionRef.current;
+    const U = layoutRef.current.u;
+    const W = section?.clientWidth ?? window.innerWidth;
+    const H = section?.clientHeight ?? window.innerHeight;
+    const a = (-11 * Math.PI) / 180;
+    const y = -120 * U;
+    const z = (560 + 215) * U;
+    const yy = y * Math.cos(a) - z * Math.sin(a);
+    const zz = y * Math.sin(a) + z * Math.cos(a);
+    const k = 2600 / (2600 - zz);
+    return {
+      cx: W / 2,
+      cy: H * 0.33 + (H * 0.09 + yy) * k,
+      w: 250 * 1.1 * U * k,
+      h: 330 * 1.1 * U * k,
+    };
+  }, []);
+
+  // Size and place the flat overlay from the real 3D card.
   const placeFocusCard = useCallback(() => {
     const overlay = focusCardRef.current;
-    if (!overlay) return;
+    const section = sectionRef.current;
+    if (!overlay || !section) return;
 
     // The front-most card sits at the ring's front no matter how far the
     // wheel has turned, so its box is the resting box.
     const front = cardRefs.current[mod(Math.round(qDisplay.current), N)];
-    if (!front) return;
-
-    const r = front.getBoundingClientRect();
-    if (r.width <= 0 || r.height <= 0) return;
-    // A bad measure (mid-move, mid-slide) must never resize the flat card.
-    if (r.width < 120 || r.height < 120) return;
-
-    const section = sectionRef.current;
-    if (!section) return;
+    const r = front?.getBoundingClientRect();
     const srect = section.getBoundingClientRect();
+    const e = expected();
 
-    const s = r.width / 250;
-    overlay.style.left = `${(r.left - srect.left).toFixed(2)}px`;
-    overlay.style.top = `${(r.top - srect.top).toFixed(2)}px`;
+    const ok =
+      Boolean(r) &&
+      (r as DOMRect).width > 120 &&
+      (r as DOMRect).height > 120 &&
+      Math.abs((r as DOMRect).width / e.w - 1) < 0.2 &&
+      Math.abs((r as DOMRect).height / e.h - 1) < 0.2;
+
+    const W = ok ? (r as DOMRect).width : e.w;
+    const Hh = ok ? (r as DOMRect).height : e.h;
+    const L = ok ? (r as DOMRect).left - srect.left : e.cx - W / 2;
+    const T = ok ? (r as DOMRect).top - srect.top : e.cy - Hh / 2;
+    const s = W / 250;
+
+    overlay.style.left = `${L.toFixed(2)}px`;
+    overlay.style.top = `${T.toFixed(2)}px`;
     overlay.style.width = '250px';
-    overlay.style.height = `${(r.height / s).toFixed(2)}px`;
+    overlay.style.height = `${(Hh / s).toFixed(2)}px`;
     overlay.style.transform = `scale(${s.toFixed(4)})`;
+  }, [expected]);
+
+  // The flat twin may only replace the real card when the boxes match.
+  const aligned = useCallback((el: HTMLElement | null) => {
+    const overlay = focusCardRef.current;
+    if (!overlay || !el) return false;
+    const a = overlay.getBoundingClientRect();
+    const b = el.getBoundingClientRect();
+    return (
+      a.width > 120 &&
+      Math.abs(a.left - b.left) < 6 &&
+      Math.abs(a.top - b.top) < 6 &&
+      Math.abs(a.width - b.width) < 6 &&
+      Math.abs(a.height - b.height) < 6
+    );
   }, []);
 
   useLayoutEffect(() => {
