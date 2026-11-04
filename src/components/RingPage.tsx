@@ -29,6 +29,14 @@ import {
 const N = ASSETS.length;
 const MOBILE_QUERY = '(max-width: 720px)';
 
+// Ring spacing. Cards sit 360/N apart; the card that reaches the front gets a
+// little extra room on both sides, and that extra angle is paid back evenly
+// across the rest of the wheel — so the gaps stay even everywhere and nothing
+// bunches up next to the front card.
+const FRONT_ZONE = 14; // degrees over which the front card opens up
+const FRONT_ROOM = 10; // how much extra room it gets
+const FRONT_SPREAD = 1 - (FRONT_ROOM * Math.tanh(180 / FRONT_ZONE)) / 180;
+
 const CATEGORY_LABEL: Record<AssetCard['cat'], string> = {
   projects: 'PROJECTS',
   skills: 'SKILLS',
@@ -200,8 +208,10 @@ export const RingPage = ({
         bf = focus;
         bestIdx = i;
       }
-      // Nudge the near neighbours further out so they never crowd the front.
-      const th2 = th + Math.sign(th) * 6 * Math.exp(-((th / 14) ** 2)) * (1 - focus);
+      // Open the spacing around the front card, and spread the rest of the
+      // ring evenly. Symmetric in th, so the same little gap appears on both
+      // sides of whichever card has just arrived in the middle.
+      const th2 = FRONT_SPREAD * th + FRONT_ROOM * Math.tanh(th / FRONT_ZONE);
       const spoke = (th >= 0 ? -90 : 90) * (1 - focus);
       // The focused card has to sit far enough forward that the tilted
       // neighbours (their outer edges swing forward by half a card width)
