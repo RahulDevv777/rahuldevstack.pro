@@ -294,21 +294,47 @@ export const App = () => {
 
     // One gesture = one step. A real scroll accelerates or holds steady;
     // trackpad inertia only ever decelerates, so the tail is ignored.
-    let buf: number[] = [];
     let lastT = 0;
-    const avg = (a: number[], n: number) =>
-      a.reduce((s, v) => s + v, 0) / n;
+    let lockedUntil = 0;
+    let spent = false;
+    let peak = 0;
+    let low = Infinity;
+    let passed = false;
 
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
       const now = performance.now();
-      if (now - lastT > 200) buf = []; // new gesture after a quiet moment
+      const gap = now - lastT;
       lastT = now;
-      const d = e.deltaY * (e.deltaMode === 1 ? 33 : e.deltaMode === 2 ? innerHeight : 1);
-      buf.push(Math.abs(d)); if (buf.length > 150) buf.shift(); // always record, even when locked
-      if (suspended() || lockedRef.current || Math.abs(d) < 1) return;
-      // accelerating or steady = a real scroll; decelerating = momentum tail, ignore
-      if (avg(buf.slice(-10), 10) >= avg(buf.slice(-20, -10), 10) * 0.98) trigger(d > 0 ? 1 : -1, 'wheel');
+      const d =
+        e.deltaY *
+        (e.deltaMode === 1 ? 33 : e.deltaMode === 2 ? innerHeight : 1);
+      if (suspended()) return;
+
+      const a = Math.abs(d);
+      if (gap > 120) spent = false; // quiet moment = the swipe ended
+      if (spent) {
+        // still inside the same swipe (inertia tail)
+        if (a > peak) peak = a;
+        else if (a < peak * 0.85) passed = true;
+        if (passed) low = Math.min(low, a);
+        if (
+          passed &&
+          now >= lockedUntil &&
+          a > 16 &&
+          a > low * 2.8 &&
+          a > peak * 0.3
+        ) {
+          spent = false; // a NEW swipe began
+        }
+      }
+      if (now < lockedUntil || spent || a < 1) return;
+      spent = true;
+      peak = a;
+      low = Infinity;
+      passed = false;
+      lockedUntil = now + 350;
+      trigger(d > 0 ? 1 : -1, 'wheel');
     };
 
     let touchStartY = 0;
@@ -385,10 +411,10 @@ export const App = () => {
         <div id="track" ref={trackRef}>
           <section id="hero" className="panel hero" aria-label="Portfolio">
             <h1 className="sr">Rahuldev Muthamsetty — Portfolio</h1>
-            <svg viewBox="0 0 1000 112" aria-hidden="true">
+            <svg viewBox="0 0 1000 104" aria-hidden="true">
               <text
                 x="0"
-                y="110"
+                y="102"
                 textLength="1000"
                 lengthAdjust="spacingAndGlyphs"
               >

@@ -132,7 +132,6 @@ export const RingPage = ({
 }: RingPageProps) => {
   const sectionRef = useRef<HTMLElement>(null);
   const cardRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const ringSectionRef = useRef<HTMLElement>(null);
   const [layout, setLayout] = useState<RingLayout>(computeLayout);
   const layoutRef = useRef(layout);
   layoutRef.current = layout;
@@ -205,8 +204,8 @@ export const RingPage = ({
       // The focused card has to sit far enough forward that the tilted
       // neighbours (their outer edges swing forward by half a card width)
       // can never cut through it.
-      const z = current.ringR + focus * 210 * current.u;
-      const lift = -focus * 195 * current.u;
+      const z = current.ringR + focus * 215 * current.u;
+      const lift = -focus * 120 * current.u;
       const scale = 1 + focus * 0.1;
 
       element.style.transform =
@@ -237,7 +236,8 @@ export const RingPage = ({
     // stack can ever paint across it. It fades in on arrival, out on departure.
     const overlay = focusCardRef.current;
     if (overlay) {
-      const a = clamp((bf - 0.7) / 0.25, 0, 1);
+      const calm = clamp(1 - Math.abs(qTarget.current - q) / 0.12, 0, 1);
+      const a = clamp((bf - 0.7) / 0.25, 0, 1) * calm;
       overlay.style.opacity = a.toFixed(3);
       overlay.style.pointerEvents = a > 0.5 ? 'auto' : 'none';
     }
@@ -261,9 +261,13 @@ export const RingPage = ({
     const r = front.getBoundingClientRect();
     if (r.width <= 0 || r.height <= 0) return;
 
+    const section = sectionRef.current;
+    if (!section) return;
+    const srect = section.getBoundingClientRect();
+
     const s = r.width / 250;
-    overlay.style.left = `${r.left.toFixed(2)}px`;
-    overlay.style.top = `${r.top.toFixed(2)}px`;
+    overlay.style.left = `${(r.left - srect.left).toFixed(2)}px`;
+    overlay.style.top = `${(r.top - srect.top).toFixed(2)}px`;
     overlay.style.width = '250px';
     overlay.style.height = `${(r.height / s).toFixed(2)}px`;
     overlay.style.transform = `scale(${s.toFixed(4)})`;
@@ -414,7 +418,7 @@ export const RingPage = ({
       } else {
         qDisplay.current = q0 - 6;
         intro.current = { active: true, t0: now, q0 };
-        startTween(q0, 1400, cinematic, {
+        startTween(q0, 1200, cinematic, {
           user: false,
           onDone: () => {
             intro.current = { active: false, t0: 0, q0: 0 };
@@ -628,7 +632,7 @@ export const RingPage = ({
       <section
         ref={sectionRef}
         id="ring"
-        className={`panel ring-page ${active ? 'is-active' : ''} ${
+        className={`panel ring-page ${active ? 'is-active' : 'idle'} ${
           expanded !== null ? 'is-expanded' : ''
         }`}
         aria-label="Asset cards"
@@ -759,7 +763,7 @@ export const RingPage = ({
             >
               <CardFace card={ASSETS[focusOverlay]} icon={48} />
             </button>,
-            ringSectionRef.current!,
+            sectionRef.current!,
           )
         : null}
 
@@ -776,7 +780,7 @@ export const RingPage = ({
               onClose={closeExpanded}
               icon={layout.icon * 1.6}
             />,
-            ringSectionRef.current!,
+            sectionRef.current!,
           )
         : null}
     </>
