@@ -103,6 +103,8 @@ interface ContactPageProps {
   active: boolean;
 }
 
+const ROLE_LINE = profile.roles.map((role) => role.title).join(' and ');
+
 export const ContactPage = ({ active }: ContactPageProps) => {
   const [copied, setCopied] = useState(false);
 
@@ -130,11 +132,12 @@ export const ContactPage = ({ active }: ContactPageProps) => {
             Initiate conversation
           </span>
           <h2 id="contact-heading" className="contact-title">
-            Have an idea worth building?
+            Let&rsquo;s talk about the role.
           </h2>
           <p className="contact-lede">
-            I&rsquo;m open to connecting about technology projects, product
-            opportunities, and collaborative work.
+            I&rsquo;m open to {ROLE_LINE} roles — internships or full-time.
+            Reach out about the resume, my availability, or a quick
+            conversation.
           </p>
         </header>
 
