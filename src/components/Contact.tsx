@@ -1,31 +1,6 @@
-import type { CSSProperties, ReactElement } from 'react';
+import type { CSSProperties } from 'react';
+import { FitHeading } from './FitHeading';
 import { profile } from '../data/content';
-
-const CV_URL = '/Rahuldev_Muthamsetty_Resume.pdf';
-const CV_NAME = CV_URL.split('/').pop() ?? 'Rahuldev_Muthamsetty_Resume.pdf';
-
-const Envelope = () => (
-  <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-    <polyline points="22,12 12,7 2,12" />
-  </svg>
-);
-
-const LinkedIn = () => (
-  <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="2" y="3" width="7" height="9" rx="1" ry="1" />
-    <path d="M16 19h2" />
-    <path d="M16 3h2" />
-  </svg>
-);
-
-const Download = () => (
-  <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-    <polyline points="7 10 12 15 17 10" />
-    <line x1="12" x2="12" y1="3" y2="15" />
-  </svg>
-);
 
 interface FloatingNavProps {
   page: number;
@@ -115,97 +90,73 @@ export const FloatingNav = ({
 
 interface ContactPageProps {
   active: boolean;
+  onBackToTop: () => void;
 }
 
-const CV_INFO = 'PDF · 82 KB';
-
-interface ICardProps {
-  label: string;
-  value: string;
-  href: string;
-  icon: ReactElement;
-  external?: boolean;
-  download?: boolean;
-  delay: string;
-  ariaValue?: string;
-}
-
-const ICard = ({
-  label,
-  value,
-  href,
-  icon,
-  external,
-  download,
-  delay,
-  ariaValue,
-}: ICardProps) => (
-  <a
-    className="i-card"
-    href={href}
-    target={external ? '_blank' : undefined}
-    rel={external ? 'noopener noreferrer' : undefined}
-    download={download ? CV_NAME : undefined}
-    style={{ '--d': delay } as CSSProperties}
-    aria-label={`${label}: ${ariaValue ?? value}`}
-    title={ariaValue ?? value}
-  >
-    <span className="i-icon">{icon}</span>
-    <div className="i-body">
-      <span className="i-label">{label}</span>
-      <span className="i-value">{value}</span>
-    </div>
-    <span className="i-arrow" aria-hidden="true">›</span>
-  </a>
-);
-
-export const ContactPage = ({ active }: ContactPageProps) => (
+export const ContactPage = ({ active, onBackToTop }: ContactPageProps) => (
   <section
     id="contact"
     className={`panel contact-page ${active ? 'is-active' : ''}`}
     aria-labelledby="contact-heading"
     inert={active ? undefined : true}
   >
-    {/* Big faded letter across the top of the page — same size and full width
-       as the PORTFOLIO letter on the hero page, faded back. */}
-    <div className="contact-letter">
-      <svg viewBox="0 0 1000 104" aria-hidden="true">
-        <text
-          x="0"
-          y="102"
-          textLength="1000"
-          lengthAdjust="spacingAndGlyphs"
-        >
-          CONTACT
-        </text>
-      </svg>
+    <div className="contact-head">
+      <div className="contact-heading-wrap">
+        <FitHeading
+          text="CONTACT"
+          className="contact-heading"
+          id="contact-heading"
+        />
+      </div>
     </div>
 
-    <div className="i-cards">
-      <ICard
-        label="Email"
-        value={profile.email}
-        href={`mailto:${profile.email}`}
-        icon={<Envelope />}
-        delay="0ms"
-      />
-      <ICard
-        label="LinkedIn"
-        value={profile.linkedin}
-        href={profile.linkedinUrl}
-        icon={<LinkedIn />}
-        external
-        delay="140ms"
-      />
-      <ICard
-        label="Download CV"
-        value={CV_INFO}
-        href={CV_URL}
-        icon={<Download />}
-        download
-        delay="280ms"
-        ariaValue={`${CV_NAME} — ${CV_INFO}`}
-      />
+    <div className="contact-content">
+      <div className="c-group" style={{ '--d': '0ms' } as CSSProperties}>
+        <span className="c-label">Email</span>
+        <a className="c-email" href={`mailto:${profile.email}`}>
+          {profile.email}
+        </a>
+      </div>
+
+      <div className="c-group" style={{ '--d': '110ms' } as CSSProperties}>
+        <span className="c-label">LinkedIn</span>
+        <a
+          className="c-link"
+          href={profile.linkedinUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {profile.linkedin}
+        </a>
+      </div>
+
+      <div className="c-group" style={{ '--d': '220ms' } as CSSProperties}>
+        <span className="c-label">Location</span>
+        <p className="c-body">{profile.location}</p>
+      </div>
+
+      <div className="c-group" style={{ '--d': '330ms' } as CSSProperties}>
+        <span className="c-label">Open to</span>
+        <ul className="c-roles">
+          {profile.roles.map((role) => (
+            <li key={role.title}>{role.title}</li>
+          ))}
+        </ul>
+      </div>
+
+      <div
+        className="c-group c-group-quote"
+        style={{ '--d': '470ms' } as CSSProperties}
+      >
+        <p className="c-quote">“{profile.quote}”</p>
+      </div>
     </div>
+
+    <footer className="contact-foot">
+      <button type="button" className="glass-pill" onClick={onBackToTop}>
+        <span aria-hidden="true">↑</span> back to top
+      </button>
+      <span className="contact-copy">© 2026 Rahuldev Muthamsetty</span>
+    </footer>
   </section>
 );

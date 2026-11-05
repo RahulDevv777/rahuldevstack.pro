@@ -435,7 +435,7 @@ export const App = () => {
             onOverlayChange={handleRingOverlay}
           />
 
-          <ContactPage active={page === 3} />
+          <ContactPage active={page === 3} onBackToTop={() => goToPage(0)} />
         </div>
       </div>
 
