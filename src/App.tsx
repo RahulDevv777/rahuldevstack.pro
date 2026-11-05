@@ -255,10 +255,6 @@ export const App = () => {
     setRingOverlay(open);
   }, []);
 
-  const goToHero = useCallback(() => {
-    goToPage(0, { instant: false });
-  }, [goToPage]);
-
   // The gesture engine: one deliberate scroll = one step. Wheel inertia,
   // trackpad tails and key repeats can never skip a heading or a page.
   useEffect(() => {
@@ -439,7 +435,7 @@ export const App = () => {
             onOverlayChange={handleRingOverlay}
           />
 
-          <ContactPage active={page === 3} onBackToTop={goToHero} />
+          <ContactPage active={page === 3} />
         </div>
       </div>
 

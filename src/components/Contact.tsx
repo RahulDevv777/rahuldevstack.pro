@@ -5,7 +5,7 @@ const CV_URL = '/Rahuldev_Muthamsetty_Resume.pdf';
 const CV_NAME = CV_URL.split('/').pop() ?? 'Rahuldev_Muthamsetty_Resume.pdf';
 
 const Envelope = () => (
-  <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+  <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
     <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
     <polyline points="22,12 12,7 2,12" />
   </svg>
@@ -20,7 +20,7 @@ const LinkedIn = () => (
 );
 
 const Download = () => (
-  <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+  <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
     <polyline points="7 10 12 15 17 10" />
     <line x1="12" x2="12" y1="3" y2="15" />
@@ -115,8 +115,9 @@ export const FloatingNav = ({
 
 interface ContactPageProps {
   active: boolean;
-  onBackToTop?: () => void;
 }
+
+const CV_INFO = 'PDF · 82 KB';
 
 interface ICardProps {
   label: string;
@@ -126,6 +127,7 @@ interface ICardProps {
   external?: boolean;
   download?: boolean;
   delay: string;
+  ariaValue?: string;
 }
 
 const ICard = ({
@@ -136,6 +138,7 @@ const ICard = ({
   external,
   download,
   delay,
+  ariaValue,
 }: ICardProps) => (
   <a
     className="i-card"
@@ -144,13 +147,15 @@ const ICard = ({
     rel={external ? 'noopener noreferrer' : undefined}
     download={download ? CV_NAME : undefined}
     style={{ '--d': delay } as CSSProperties}
-    aria-label={`${label}: ${value}`}
+    aria-label={`${label}: ${ariaValue ?? value}`}
+    title={ariaValue ?? value}
   >
     <span className="i-icon">{icon}</span>
-    <div>
+    <div className="i-body">
       <span className="i-label">{label}</span>
       <span className="i-value">{value}</span>
     </div>
+    <span className="i-arrow" aria-hidden="true">›</span>
   </a>
 );
 
@@ -161,8 +166,8 @@ export const ContactPage = ({ active }: ContactPageProps) => (
     aria-labelledby="contact-heading"
     inert={active ? undefined : true}
   >
-    {/* Big faded letter across the top of the page, same size and full width
-       as the PORTFOLIO letter on the hero page, but faded back. */}
+    {/* Big faded letter across the top of the page — same size and full width
+       as the PORTFOLIO letter on the hero page, faded back. */}
     <div className="contact-letter">
       <svg viewBox="0 0 1000 104" aria-hidden="true">
         <text
@@ -194,11 +199,12 @@ export const ContactPage = ({ active }: ContactPageProps) => (
       />
       <ICard
         label="Download CV"
-        value={CV_NAME}
+        value={CV_INFO}
         href={CV_URL}
         icon={<Download />}
         download
         delay="280ms"
+        ariaValue={`${CV_NAME} — ${CV_INFO}`}
       />
     </div>
   </section>
