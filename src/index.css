@@ -677,7 +677,7 @@ ol {
 .menu-item,
 .menu-item *,
 .fit-heading,
-.contact-heading,
+.contact-title,
 .detail-heading {
   outline: none !important;
   box-shadow: none;
@@ -695,8 +695,8 @@ ol {
 .menu-item *:focus-visible,
 .fit-heading:focus,
 .fit-heading:focus-visible,
-.contact-heading:focus,
-.contact-heading:focus-visible,
+.contact-title:focus,
+.contact-title:focus-visible,
 .detail-heading:focus,
 .detail-heading:focus-visible {
   outline: none !important;
@@ -1735,199 +1735,291 @@ ol {
    ========================================================================== */
 
 .contact-page {
-  display: grid;
-  grid-template-columns: minmax(0, 38%) minmax(0, 1fr);
-  grid-template-rows: minmax(0, 1fr) auto;
-  column-gap: 0;
-  row-gap: clamp(18px, 3vh, 32px);
-  padding: clamp(84px, 12vh, 130px) var(--gutter)
-    max(26px, calc(env(safe-area-inset-bottom) + 12px));
+  display: block;
+  padding: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
   background: var(--bg);
 }
 
-.contact-head {
-  grid-column: 1;
-  grid-row: 1;
+.contact-inner {
   display: flex;
-  align-items: center;
-  min-width: 0;
-  min-height: 0;
-}
-
-.contact-heading-wrap {
+  flex-direction: column;
+  justify-content: center;
   width: 100%;
-  min-width: 0;
+  max-width: 1180px;
+  min-height: 100%;
+  margin: 0 auto;
+  padding: clamp(84px, 11vh, 124px) var(--gutter) clamp(44px, 8vh, 92px);
 }
 
-.contact-heading {
-  display: block;
-  width: max-content;
-  max-width: 100%;
-  padding-bottom: 0.06em;
-  font-size: clamp(2.6rem, 7vw, 7rem);
-  font-weight: 900;
-  line-height: 0.95;
-  letter-spacing: -0.03em;
+.contact-head {
+  max-width: 660px;
+  margin-bottom: clamp(26px, 4.4vh, 46px);
+}
+
+.contact-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 11px 5px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  background: #ffffff;
+  color: var(--label);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  white-space: nowrap;
+  line-height: 1;
+  margin-bottom: 20px;
+}
+
+.contact-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+.contact-title {
+  font-family: var(--font);
+  font-variation-settings: 'wght' 800, 'wdth' 112;
+  font-size: clamp(1.9rem, 3.6vw, 2.9rem);
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
   background: var(--gradient);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
+  margin-bottom: 14px;
 }
 
-.contact-content {
-  grid-column: 2;
-  grid-row: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  align-self: center;
-  gap: clamp(20px, 3.4vh, 34px);
-  width: min(100%, 720px);
-  min-width: 0;
-  margin-left: auto;
+.contact-lede {
+  max-width: 54ch;
+  color: var(--muted);
+  font-size: clamp(0.95rem, 1.3vw, 1.06rem);
+  font-weight: 300;
+  line-height: 1.65;
 }
 
-.c-group {
+/* Three floating iCards — email, LinkedIn, CV. */
+.contact-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 292px), 1fr));
+  gap: clamp(16px, 1.7vw, 24px);
+}
+
+.contact-card {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
+  justify-content: space-between;
+  gap: 22px;
+  padding: clamp(22px, 2.1vw, 28px);
+  border-radius: 20px;
+  background: #ffffff;
+  border: 1px solid rgba(17, 17, 17, 0.07);
+  box-shadow:
+    0 26px 52px -22px rgba(17, 17, 17, 0.22),
+    0 2px 6px rgba(17, 17, 17, 0.04);
   opacity: 0;
-  transform: translate3d(0, 24px, 0);
+  transform: translate3d(0, 26px, 0);
   transition:
     opacity 800ms var(--ease-out),
-    transform 900ms var(--ease-out);
-  transition-delay: calc(var(--d, 0ms) + 500ms);
+    transform 850ms var(--ease-out),
+    box-shadow 240ms ease,
+    border-color 240ms ease,
+    translate 240ms ease;
+  transition-delay: calc(var(--d, 0ms) + 380ms);
 }
 
-.contact-page.is-active .c-group {
+.contact-page.is-active .contact-card {
   opacity: 1;
   transform: translate3d(0, 0, 0);
 }
 
-.c-label {
-  color: var(--label);
-  font-size: 10px;
-  font-weight: 500;
-  line-height: 1.4;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+.contact-card:hover {
+  translate: 0 -4px;
+  box-shadow:
+    0 38px 68px -24px rgba(17, 17, 17, 0.26),
+    0 4px 10px rgba(17, 17, 17, 0.05);
+  border-color: rgba(17, 17, 17, 0.13);
 }
 
-.c-email {
-  position: relative;
-  display: inline-block;
-  max-width: 100%;
-  color: var(--ink);
-  font-size: clamp(1rem, 2.2vw, 2rem);
-  font-weight: 600;
-  line-height: 1.25;
-  letter-spacing: -0.03em;
-  text-decoration: none;
-  overflow-wrap: anywhere;
-}
-
-.c-email::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -3px;
-  height: 1px;
-  background: currentColor;
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform 400ms var(--ease-out);
-}
-
-.c-email:hover::after {
-  transform: scaleX(1);
-}
-
-.c-link {
-  position: relative;
-  color: var(--ink);
-  font-size: clamp(0.85rem, 1.2vw, 1.05rem);
-  font-weight: 400;
-  line-height: 1.5;
-  text-decoration: none;
-  overflow-wrap: anywhere;
-  transition: opacity 200ms ease;
-}
-
-.c-link::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -4px;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.35;
-  transform: scaleX(0.25);
-  transform-origin: left center;
-  transition:
-    transform 400ms var(--ease-out),
-    opacity 200ms ease;
-}
-
-.c-link:hover {
-  opacity: 0.7;
-}
-
-.c-link:hover::after {
-  opacity: 1;
-  transform: scaleX(1);
-}
-
-.c-body {
-  max-width: 44ch;
-  color: var(--muted);
-  font-size: clamp(12px, 1vw, 14px);
-  font-weight: 300;
-  line-height: 1.7;
-}
-
-.c-roles {
+.cc-top {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  color: var(--ink-soft);
-  font-size: clamp(12px, 1vw, 14px);
-  font-weight: 300;
-  line-height: 1.7;
+  gap: 10px;
 }
 
-.c-quote {
-  max-width: 28ch;
+.cc-icon {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  background: #f7f7f8;
   color: var(--ink);
-  font-size: clamp(1.15rem, 2vw, 1.7rem);
-  font-weight: 400;
-  line-height: 1.35;
-  letter-spacing: -0.02em;
+  flex-shrink: 0;
+  margin-bottom: 4px;
 }
 
-.contact-foot {
-  grid-column: 1 / -1;
-  grid-row: 2;
+.cc-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.cc-title {
+  color: var(--ink);
+  font-size: 1.06rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+
+.cc-desc {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 300;
+  line-height: 1.6;
+}
+
+.cc-value {
+  display: block;
+  margin-top: 4px;
+  padding: 9px 11px;
+  border-radius: 7px;
+  background: #f6f6f7;
+  border: 1px solid rgba(17, 17, 17, 0.06);
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  font-weight: 400;
+  letter-spacing: -0.005em;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.cc-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.c-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px 14px;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease,
+    border-color 180ms ease,
+    opacity 180ms ease;
+}
+
+.c-btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.c-btn-primary {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #ffffff;
+}
+
+.c-btn-primary:hover {
+  background: #000000;
+  border-color: #000000;
+}
+
+.c-btn-ghost {
+  background: #ffffff;
+  border-color: rgba(17, 17, 17, 0.12);
+  color: var(--ink);
+}
+
+.c-btn-ghost:hover {
+  background: #f4f4f5;
+  border-color: rgba(17, 17, 17, 0.2);
+}
+
+.c-btn-wide {
+  flex: 1 1 auto;
+}
+
+.c-btn-end {
+  margin-left: auto;
+}
+
+/* Resume download bar under the cards. */
+.cv-strip {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: clamp(16px, 2vw, 24px);
+  padding: 16px 20px;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid rgba(17, 17, 17, 0.07);
+  box-shadow:
+    0 20px 40px -24px rgba(17, 17, 17, 0.2),
+    0 2px 5px rgba(17, 17, 17, 0.03);
+  opacity: 0;
+  transform: translate3d(0, 20px, 0);
+  transition:
+    opacity 800ms var(--ease-out),
+    transform 850ms var(--ease-out);
+  transition-delay: calc(var(--d, 0ms) + 380ms);
+}
+
+.contact-page.is-active .cv-strip {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.cv-strip-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
   min-width: 0;
 }
 
-.contact-copy {
+.cv-strip-info .cc-icon {
+  margin-bottom: 0;
+}
+
+.cv-strip-title {
+  color: var(--ink);
+  font-size: 0.94rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+}
+
+.cv-strip-meta {
   color: var(--label);
-  font-size: 9px;
-  font-weight: 500;
+  font-size: 0.75rem;
+  font-weight: 400;
   line-height: 1.4;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  text-align: right;
+  overflow-wrap: anywhere;
 }
 
 /* ==========================================================================
@@ -1935,8 +2027,7 @@ ol {
    ========================================================================== */
 
 @media (max-width: 1100px) {
-  .detail,
-  .contact-page {
+  .detail {
     grid-template-columns: minmax(0, 35%) minmax(0, 1fr);
   }
 
@@ -1961,8 +2052,7 @@ ol {
     width: min(32vw, 320px);
   }
 
-  .detail,
-  .contact-page {
+  .detail {
     grid-template-columns: minmax(0, 34%) minmax(0, 1fr);
   }
 
@@ -2350,50 +2440,38 @@ ol {
     right: var(--gutter);
   }
 
-  /* Contact: one column — heading, then the details, then the footer. */
-  .contact-page {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto minmax(0, 1fr) auto;
-    padding-top: max(76px, calc(env(safe-area-inset-top) + 62px));
-    row-gap: 16px;
+  /* Contact: one column of cards under the heading. */
+  .contact-inner {
+    padding-top: max(78px, calc(env(safe-area-inset-top) + 64px));
+    padding-bottom: 34px;
   }
 
   .contact-head {
-    grid-column: 1;
-    grid-row: 1;
+    margin-bottom: 24px;
+  }
+
+  .contact-title {
+    font-size: clamp(1.55rem, 7.2vw, 2rem);
+  }
+
+  .contact-lede {
+    font-size: 0.92rem;
+  }
+
+  .contact-card {
+    gap: 18px;
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  .cv-strip {
+    flex-direction: column;
     align-items: flex-start;
+    padding: 16px;
   }
 
-  .contact-heading {
-    font-size: 32px;
-  }
-
-  .contact-content {
-    grid-column: 1;
-    grid-row: 2;
-    align-self: start;
-    gap: clamp(12px, 2.2vh, 20px);
+  .cv-strip .c-btn {
     width: 100%;
-    margin-left: 0;
-  }
-
-  .c-email {
-    font-size: clamp(0.92rem, 4.8vw, 1.35rem);
-  }
-
-  .c-quote {
-    font-size: clamp(1rem, 5vw, 1.35rem);
-  }
-
-  .contact-foot {
-    grid-column: 1;
-    grid-row: 3;
-    padding-top: 4px;
-  }
-
-  .contact-copy {
-    font-size: 8px;
-    letter-spacing: 0.08em;
   }
 }
 
@@ -2407,8 +2485,7 @@ ol {
     font-size: 9px;
   }
 
-  .detail-heading,
-  .contact-heading {
+  .detail-heading {
     font-size: 28px;
   }
 
@@ -2438,8 +2515,18 @@ ol {
     top: calc(50% + clamp(4rem, 7vw, 7rem));
   }
 
-  .contact-content {
-    gap: 14px;
+  .contact-inner {
+    padding-top: 80px;
+    padding-bottom: 26px;
+  }
+
+  .contact-head {
+    margin-bottom: 20px;
+  }
+
+  .contact-card {
+    gap: 16px;
+    padding: 20px;
   }
 
   .ring-summary {
@@ -2531,14 +2618,40 @@ ol {
     font-size: 26px;
   }
 
-  /* Contact: keep the two-column reading line, tighter vertically. */
-  .contact-page {
-    padding-top: max(56px, calc(env(safe-area-inset-top) + 44px));
-    row-gap: 12px;
+  /* Contact: claw back height so the heading and cards still fit. */
+  .contact-inner {
+    padding-top: max(58px, calc(env(safe-area-inset-top) + 46px));
+    padding-bottom: 20px;
   }
 
-  .contact-content {
-    gap: 10px;
+  .contact-head {
+    margin-bottom: 16px;
+  }
+
+  .contact-eyebrow {
+    margin-bottom: 12px;
+  }
+
+  .contact-title {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+  }
+
+  .contact-lede {
+    font-size: 0.85rem;
+  }
+
+  .contact-card {
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .cc-desc {
+    display: none;
+  }
+
+  .cv-strip {
+    padding: 12px 16px;
   }
 }
 
@@ -2575,7 +2688,8 @@ ol {
     transform: none;
   }
 
-  .c-group {
+  .contact-card,
+  .cv-strip {
     opacity: 1;
     transform: none;
   }
@@ -2592,7 +2706,7 @@ ol {
 .h-display,
 .menu-item,
 .menu-item-text,
-.contact-heading,
+.contact-title,
 .detail-heading,
 .card-title,
 .ring-summary-title,
@@ -2612,7 +2726,7 @@ ol {
 
 .rx-title,
 .detail-heading,
-.contact-heading,
+.contact-title,
 .menu-item {
   line-height: 0.95;
 }
