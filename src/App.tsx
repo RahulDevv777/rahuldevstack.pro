@@ -310,31 +310,56 @@ export const App = () => {
     const axisValue = (value: number, mode: number) =>
       value * (mode === 1 ? 33 : mode === 2 ? innerHeight : 1);
 
+    // The ring is a sideways control, but no swipe is perfectly straight: a
+    // turn always carries a little vertical drift. So a page step off the ring
+    // needs a push that is clearly and sustainedly vertical — and never right
+    // after a turn. One deliberate push = one page; drift = nothing.
+    const RING_TURN_COOLDOWN = 520;
+    const RING_STEP_DISTANCE = 90;
+    let ringTurnedAt = 0;
+    let ringPush = 0;
+    let ringPushAt = 0;
+
     const onWheel = (e: WheelEvent) => {
       const raw = axisValue(e.deltaY, e.deltaMode);
       const side = axisValue(e.deltaX, e.deltaMode);
+      const now = performance.now();
+      const a = Math.abs(raw);
+      const s = Math.abs(side);
 
-      // The ring is a sideways control: a horizontal swipe turns it, a
-      // vertical one steps to the next or previous page.
-      if (
-        pageRef.current === 2 &&
-        Math.abs(side) > Math.abs(raw) &&
-        Math.abs(side) > 1
-      ) {
-        return; // RingPage owns this gesture
+      if (pageRef.current === 2) {
+        if (s > 1 && s > a) {
+          // Sideways: the ring turns. Any pending vertical push is drift.
+          ringTurnedAt = now;
+          ringPush = 0;
+          return;
+        }
+        if (suspended()) return;
+        e.preventDefault();
+        // Diagonal noise: wait for a clearer vertical signal.
+        if (a < 2 || a <= s * 1.4) return;
+        if (now - ringPushAt > 170) ringPush = 0; // a fresh push begins
+        ringPushAt = now;
+        ringPush += Math.min(a, 160); // one mouse notch counts in full
+        if (ringPush < RING_STEP_DISTANCE) return;
+        ringPush = 0;
+        if (now - ringTurnedAt < RING_TURN_COOLDOWN) return; // let the turn settle
+        trigger(raw > 0 ? 1 : -1, 'wheel');
+        return;
       }
+
+      // Sideways intent never steps a page; only the ring turns on it.
+      if (s > a && s > 1) return;
 
       if (!suspended() && Math.abs(raw) > 1 && contactScrollRoom(raw > 0 ? 1 : -1) > 1) {
         return; // the contact panel keeps the wheel while it can still move
       }
       e.preventDefault();
-      const now = performance.now();
       const gap = now - lastT;
       lastT = now;
       const d = raw;
       if (suspended()) return;
 
-      const a = Math.abs(d);
       if (gap > 120) spent = false; // quiet moment = the swipe ended
       if (spent) {
         // still inside the same swipe (inertia tail)
@@ -360,11 +385,13 @@ export const App = () => {
       trigger(d > 0 ? 1 : -1, 'wheel');
     };
 
+    let touchStartX = 0;
     let touchStartY = 0;
     let touchStartTime = 0;
 
     const onTouchStart = (event: TouchEvent) => {
       if (suspended()) return;
+      touchStartX = event.touches[0].clientX;
       touchStartY = event.touches[0].clientY;
       touchStartTime = performance.now();
     };
@@ -373,9 +400,16 @@ export const App = () => {
       if (suspended() || lockedRef.current) return;
       const touch = event.changedTouches[0];
       if (!touch) return;
+      const dx = touch.clientX - touchStartX;
       const dy = touch.clientY - touchStartY;
       const duration = performance.now() - touchStartTime;
-      if (Math.abs(dy) > 60 && duration < 600) {
+      const onRing = pageRef.current === 2;
+      // A sideways swipe is never perfectly horizontal — hold it to a clearly
+      // vertical travel (and a longer one on the ring) before leaving a page.
+      const run = onRing ? 130 : 60;
+      const sideways = Math.abs(dx) > 1 && Math.abs(dx) >= Math.abs(dy) * 0.7;
+      if (sideways) return;
+      if (Math.abs(dy) > run && duration < 600) {
         const dir = dy < 0 ? 1 : -1;
         if (contactScrollRoom(dir) > 1) return; // still scrolling the contact list
         trigger(dir, 'touch');
