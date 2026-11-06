@@ -106,7 +106,7 @@ interface ContactPageProps {
 const STATUS = [
   { label: 'Currently', value: 'Java full stack' },
   { label: 'Next', value: 'Data structures & algorithms' },
-  { label: 'Open to', value: 'Internships & junior roles' },
+  { label: 'Open to', value: 'Adapt and learn new things' },
 ];
 
 const MARQUEE = Array.from(
@@ -148,7 +148,7 @@ export const ContactPage = ({ active }: ContactPageProps) => {
             Open to opportunities
           </span>
           <h2 id="contact-heading" className="contact-title">
-            Let&rsquo;s build what your team ships next.
+            Let&rsquo;s connect.
           </h2>
           <p className="contact-lede">
             Java full stack in progress. Data structures and algorithms next.

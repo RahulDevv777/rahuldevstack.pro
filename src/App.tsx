@@ -276,8 +276,7 @@ export const App = () => {
       }
 
       if (current === 2) {
-        // The wheel belongs to the ring; keys leave the page.
-        if (source !== 'key') return;
+        // The ring turns on sideways gestures; up and down leave the page.
         if (dir > 0) goToPage(3);
         else goToPage(1, { menuIndex: 4 });
         return;
@@ -308,10 +307,23 @@ export const App = () => {
       return dir > 0 ? Math.max(0, max - host.scrollTop) : host.scrollTop;
     };
 
+    const axisValue = (value: number, mode: number) =>
+      value * (mode === 1 ? 33 : mode === 2 ? innerHeight : 1);
+
     const onWheel = (e: WheelEvent) => {
-      const raw =
-        e.deltaY *
-        (e.deltaMode === 1 ? 33 : e.deltaMode === 2 ? innerHeight : 1);
+      const raw = axisValue(e.deltaY, e.deltaMode);
+      const side = axisValue(e.deltaX, e.deltaMode);
+
+      // The ring is a sideways control: a horizontal swipe turns it, a
+      // vertical one steps to the next or previous page.
+      if (
+        pageRef.current === 2 &&
+        Math.abs(side) > Math.abs(raw) &&
+        Math.abs(side) > 1
+      ) {
+        return; // RingPage owns this gesture
+      }
+
       if (!suspended() && Math.abs(raw) > 1 && contactScrollRoom(raw > 0 ? 1 : -1) > 1) {
         return; // the contact panel keeps the wheel while it can still move
       }

@@ -185,10 +185,12 @@ const computeLayout = (): RingLayout => {
   };
 };
 
+/* Only sideways intent turns the ring — vertical gestures step the pages. */
 const normalizeWheel = (event: WheelEvent) => {
-  if (event.deltaMode === 1) return event.deltaY * 16;
-  if (event.deltaMode === 2) return event.deltaY * window.innerHeight;
-  return event.deltaY;
+  if (Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return 0;
+  if (event.deltaMode === 1) return event.deltaX * 16;
+  if (event.deltaMode === 2) return event.deltaX * window.innerWidth;
+  return event.deltaX;
 };
 
 const CardFace = ({
@@ -554,14 +556,14 @@ export const RingPage = ({
 
     const onWheel = (event: WheelEvent) => {
       if (expandedRef.current !== null) return;
-      event.preventDefault();
       const delta = normalizeWheel(event);
-      if (!delta) return;
+      if (!delta) return; // vertical: let the page engine have it
+      event.preventDefault();
 
       tween.current = null;
       const now = performance.now();
       lastInteraction.current = now;
-      qTarget.current += delta * 0.004;
+      qTarget.current += delta * 0.006;
 
       window.clearTimeout(snapTimer.current);
       snapTimer.current = window.setTimeout(() => {
@@ -754,9 +756,9 @@ export const RingPage = ({
         inert={active ? undefined : true}
       >
         <p className="sr-only">
-          A ring of {N} asset cards. Use the left and right arrow keys to rotate
-          the ring, and press Enter to open the card in focus. Arrow up returns
-          to the sections and arrow down goes to contact.
+          A ring of {N} asset cards. Swipe sideways, or use the left and right
+          arrow keys, to turn the ring, and press Enter to open the card in
+          focus. Swipe or scroll up for the sections and down for contact.
         </p>
 
         <div className="ring-stage">
@@ -878,7 +880,9 @@ export const RingPage = ({
               {card.subtitle} · {card.period}
             </span>
             <p className="ring-summary-copy">{card.summary}</p>
-            <span className="ring-summary-hint">click the card to open</span>
+            <span className="ring-summary-hint">
+              swipe side to side · click to open
+            </span>
           </div>
         </aside>
 
