@@ -297,14 +297,29 @@ export const App = () => {
     let low = Infinity;
     let passed = false;
 
+    // The last page is taller than short screens, so its panel scrolls on its
+    // own. Only hand the gesture back to the page engine at a real edge.
+    const contactScrollRoom = (dir: 1 | -1) => {
+      if (pageRef.current !== 3) return 0;
+      const host = document.querySelector<HTMLElement>('.contact-page');
+      if (!host) return 0;
+      const max = host.scrollHeight - host.clientHeight;
+      if (max <= 1) return 0;
+      return dir > 0 ? Math.max(0, max - host.scrollTop) : host.scrollTop;
+    };
+
     const onWheel = (e: WheelEvent) => {
+      const raw =
+        e.deltaY *
+        (e.deltaMode === 1 ? 33 : e.deltaMode === 2 ? innerHeight : 1);
+      if (!suspended() && Math.abs(raw) > 1 && contactScrollRoom(raw > 0 ? 1 : -1) > 1) {
+        return; // the contact panel keeps the wheel while it can still move
+      }
       e.preventDefault();
       const now = performance.now();
       const gap = now - lastT;
       lastT = now;
-      const d =
-        e.deltaY *
-        (e.deltaMode === 1 ? 33 : e.deltaMode === 2 ? innerHeight : 1);
+      const d = raw;
       if (suspended()) return;
 
       const a = Math.abs(d);
@@ -349,7 +364,9 @@ export const App = () => {
       const dy = touch.clientY - touchStartY;
       const duration = performance.now() - touchStartTime;
       if (Math.abs(dy) > 60 && duration < 600) {
-        trigger(dy < 0 ? 1 : -1, 'touch');
+        const dir = dy < 0 ? 1 : -1;
+        if (contactScrollRoom(dir) > 1) return; // still scrolling the contact list
+        trigger(dir, 'touch');
       }
     };
 

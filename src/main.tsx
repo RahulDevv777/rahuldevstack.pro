@@ -10,7 +10,8 @@ const shellEls = () => [
   document.scrollingElement,
   document.body,
   document.getElementById('track'),
-  ...document.querySelectorAll('.panel'),
+  // The last page scrolls its own content; every other panel is a fixed shell.
+  ...document.querySelectorAll('.panel:not(.contact-page)'),
 ];
 const unscroll = () =>
   shellEls().forEach((e) => {

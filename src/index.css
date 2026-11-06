@@ -1735,29 +1735,48 @@ ol {
    ========================================================================== */
 
 .contact-page {
-  display: block;
+  display: flex;
+  flex-direction: column;
   padding: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  background:
-    radial-gradient(1100px 620px at 18% -12%, #ffffff 0%, rgba(255, 255, 255, 0) 62%),
-    radial-gradient(900px 520px at 100% 8%, rgba(232, 234, 241, 0.55) 0%, rgba(232, 234, 241, 0) 58%),
-    linear-gradient(180deg, #fcfcfd 0%, #f5f6f8 100%);
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  background: linear-gradient(180deg, #fcfcfc 0%, #f3f3f4 100%);
+}
+
+/* Soft scrim so the floating nav stays legible once the page is scrolled. */
+.contact-page::before {
+  content: '';
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  flex: 0 0 auto;
+  height: 80px;
+  margin-bottom: -80px;
+  background: linear-gradient(
+    180deg,
+    rgba(252, 252, 252, 0.99) 0%,
+    rgba(252, 252, 252, 0.99) 52px,
+    rgba(252, 252, 252, 0.55) 66px,
+    rgba(252, 252, 252, 0) 80px
+  );
+  pointer-events: none;
 }
 
 .contact-inner {
+  flex: 1 0 auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   width: 100%;
   max-width: 1180px;
-  min-height: 100%;
   margin: 0 auto;
-  padding: clamp(84px, 11vh, 124px) var(--gutter) clamp(44px, 8vh, 92px);
+  padding: clamp(84px, 11vh, 124px) var(--gutter) clamp(28px, 4vh, 52px);
 }
 
 .contact-head {
-  max-width: 660px;
+  max-width: 760px;
   margin-bottom: clamp(26px, 4.4vh, 46px);
 }
 
@@ -1793,17 +1812,9 @@ ol {
   font-weight: 800;
   line-height: 1.04;
   letter-spacing: -0.035em;
-  background: linear-gradient(
-    112deg,
-    #07070c 0%,
-    #1c1c26 34%,
-    #4b4d5e 68%,
-    #8b8da0 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
+  color: #000000;
+  background: none;
+  -webkit-text-fill-color: #000000;
   margin-bottom: 14px;
 }
 
@@ -1813,6 +1824,46 @@ ol {
   font-size: clamp(0.95rem, 1.3vw, 1.06rem);
   font-weight: 300;
   line-height: 1.65;
+}
+
+.contact-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 24px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(20, 20, 32, 0.08);
+  max-width: 760px;
+}
+
+.contact-status-item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 10px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+
+.contact-status-item::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #111114;
+  transform: translateY(-2px);
+}
+
+.contact-status-label {
+  color: #a2a3ab;
+  font-weight: 500;
+}
+
+.contact-status-value {
+  color: #111114;
+  font-weight: 600;
 }
 
 /* Three floating iCards — email, LinkedIn, CV. */
@@ -1874,28 +1925,9 @@ ol {
   border-radius: 10px;
   border: 1px solid rgba(20, 20, 32, 0.09);
   background: linear-gradient(160deg, #fafafb 0%, #eff0f3 100%);
-  color: #1a1a22;
+  color: #111114;
   flex-shrink: 0;
   margin-bottom: 4px;
-}
-
-/* A whisper of colour per channel, graded down to sit inside the mono page. */
-.contact-card:nth-child(1) .cc-icon {
-  border-color: rgba(176, 128, 66, 0.22);
-  background: linear-gradient(160deg, #fffaf4 0%, #f7eee2 100%);
-  color: #8a6430;
-}
-
-.contact-card:nth-child(2) .cc-icon {
-  border-color: rgba(58, 96, 158, 0.2);
-  background: linear-gradient(160deg, #f5f8fe 0%, #e8eefa 100%);
-  color: #33557f;
-}
-
-.contact-card:nth-child(3) .cc-icon {
-  border-color: rgba(42, 112, 84, 0.18);
-  background: linear-gradient(160deg, #f4fbf7 0%, #e6f2eb 100%);
-  color: #2f6a52;
 }
 
 .cc-icon svg {
@@ -2055,6 +2087,80 @@ ol {
   font-weight: 400;
   line-height: 1.4;
   overflow-wrap: anywhere;
+}
+
+/* Endless resume ticker along the bottom edge of the last page. */
+.contact-marquee {
+  flex: 0 0 auto;
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid rgba(20, 20, 32, 0.08);
+  background: rgba(255, 255, 255, 0.72);
+  padding: 15px 0;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 6%,
+    #000 94%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 6%,
+    #000 94%,
+    transparent 100%
+  );
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-drift 52s linear infinite;
+  will-change: transform;
+}
+
+.contact-marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+.marquee-group {
+  display: flex;
+  align-items: center;
+}
+
+.marquee-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(20px, 2.2vw, 30px);
+  padding-right: clamp(20px, 2.2vw, 30px);
+}
+
+.marquee-item {
+  color: #6c6d75;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.17em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.marquee-sep {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #c3c4cb;
+  flex-shrink: 0;
+}
+
+@keyframes marquee-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
 }
 
 /* ==========================================================================
@@ -2493,6 +2599,26 @@ ol {
     font-size: 0.92rem;
   }
 
+  .contact-status {
+    gap: 7px 18px;
+    margin-top: 16px;
+    padding-top: 13px;
+  }
+
+  .contact-status-item {
+    font-size: 9px;
+    letter-spacing: 0.11em;
+  }
+
+  .contact-marquee {
+    padding: 12px 0;
+  }
+
+  .marquee-item {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+  }
+
   .contact-card {
     gap: 18px;
     padding: 20px;
@@ -2676,6 +2802,14 @@ ol {
     font-size: 0.85rem;
   }
 
+  .contact-status {
+    display: none;
+  }
+
+  .contact-marquee {
+    padding: 9px 0;
+  }
+
   .contact-card {
     gap: 14px;
     padding: 16px;
@@ -2726,6 +2860,11 @@ ol {
   .contact-card,
   .cv-strip {
     opacity: 1;
+    transform: none;
+  }
+
+  .marquee-track {
+    animation: none !important;
     transform: none;
   }
 

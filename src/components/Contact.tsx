@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { CSSProperties } from 'react';
 import { ArrowUpRight, Check, Copy, Download, FileText, Mail } from 'lucide-react';
-import { profile } from '../data/content';
+import { education, profile } from '../data/content';
 
 const CV_URL = '/Rahuldev_Muthamsetty_Resume.pdf';
 const CV_NAME = CV_URL.split('/').pop() ?? 'Rahuldev_Muthamsetty_Resume.pdf';
@@ -103,7 +103,23 @@ interface ContactPageProps {
   active: boolean;
 }
 
-const ROLE_LINE = profile.roles.map((role) => role.title).join(' and ');
+const STATUS = [
+  { label: 'Currently', value: 'Java full stack' },
+  { label: 'Next', value: 'Data structures & algorithms' },
+  { label: 'Open to', value: 'Internships & junior roles' },
+];
+
+const MARQUEE = Array.from(
+  new Set([
+    'Java full stack',
+    'Data structures & algorithms',
+    'Open to relocation',
+    ...profile.competencies,
+    ...profile.languages.map((language) => language.name),
+    ...education.map((entry) => entry.institution),
+    ...education.map((entry) => entry.qualification),
+  ]),
+);
 
 export const ContactPage = ({ active }: ContactPageProps) => {
   const [copied, setCopied] = useState(false);
@@ -129,16 +145,24 @@ export const ContactPage = ({ active }: ContactPageProps) => {
         <header className="contact-head">
           <span className="contact-eyebrow">
             <span className="contact-dot" aria-hidden="true" />
-            Initiate conversation
+            Open to opportunities
           </span>
           <h2 id="contact-heading" className="contact-title">
-            Let&rsquo;s talk about the role.
+            Let&rsquo;s build what your team ships next.
           </h2>
           <p className="contact-lede">
-            I&rsquo;m open to {ROLE_LINE} roles — internships or full-time.
-            Reach out about the resume, my availability, or a quick
-            conversation.
+            Java full stack in progress. Data structures and algorithms next.
+            Real products in between — I&rsquo;d like the next one to be with
+            your team.
           </p>
+          <div className="contact-status">
+            {STATUS.map((item) => (
+              <span className="contact-status-item" key={item.label}>
+                <span className="contact-status-label">{item.label}</span>
+                <span className="contact-status-value">{item.value}</span>
+              </span>
+            ))}
+          </div>
         </header>
 
         <div className="contact-cards">
@@ -152,8 +176,8 @@ export const ContactPage = ({ active }: ContactPageProps) => {
               </span>
               <h3 className="cc-title">Email</h3>
               <p className="cc-desc">
-                Fastest way to reach me for opportunities, technical queries, or
-                feedback.
+                Fastest way to reach me for interview invites, role details, or
+                a quick question.
               </p>
               <span className="cc-value">{profile.email}</span>
             </div>
@@ -191,8 +215,8 @@ export const ContactPage = ({ active }: ContactPageProps) => {
               </span>
               <h3 className="cc-title">LinkedIn</h3>
               <p className="cc-desc">
-                Connect professionally, discuss career opportunities, or view
-                the full background.
+                The full background — projects, coursework, and the people
+                I&rsquo;ve built with.
               </p>
               <span className="cc-value">{profile.linkedin}</span>
             </div>
@@ -220,8 +244,8 @@ export const ContactPage = ({ active }: ContactPageProps) => {
               </span>
               <h3 className="cc-title">Download CV</h3>
               <p className="cc-desc">
-                The official resume — one click to view it or save the PDF for
-                your team.
+                Every project, role and skill on one page — view it here or save
+                the PDF for your team.
               </p>
               <span className="cc-value">{CV_META}</span>
             </div>
@@ -266,6 +290,22 @@ export const ContactPage = ({ active }: ContactPageProps) => {
             <Download size={14} strokeWidth={1.8} />
             <span>Download resume</span>
           </a>
+        </div>
+      </div>
+
+      {/* Endless resume ticker — the CV's own words, looping under the page. */}
+      <div className="contact-marquee" aria-hidden="true">
+        <div className="marquee-track">
+          {[0, 1].map((copy) => (
+            <div className="marquee-group" key={copy}>
+              {MARQUEE.map((item) => (
+                <span className="marquee-cell" key={`${copy}-${item}`}>
+                  <span className="marquee-item">{item}</span>
+                  <span className="marquee-sep" />
+                </span>
+              ))}
+            </div>
+          ))}
         </div>
       </div>
     </section>
