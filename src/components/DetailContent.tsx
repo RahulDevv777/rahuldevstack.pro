@@ -107,17 +107,6 @@ export const AboutContent = () => (
       <MaskLine className="d-meta">{profile.institution}</MaskLine>
     </Group>
 
-    <Group label="Target roles" base={360}>
-      {profile.roles.map((role) => (
-        <Entry
-          key={role.title}
-          title={role.title}
-          meta="Target role"
-          body={role.description}
-        />
-      ))}
-    </Group>
-
     <Group label="Core competencies">
       <MaskBlock>
         <ul className="d-grid-list">
