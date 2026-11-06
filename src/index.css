@@ -2914,10 +2914,6 @@ ol {
     font-size: 0.85rem;
   }
 
-  .contact-status {
-    display: none;
-  }
-
   .contact-marquee {
     padding: 9px 0;
   }
@@ -2927,12 +2923,55 @@ ol {
     padding: 16px;
   }
 
+  .cv-strip {
+    padding: 12px 16px;
+  }
+}
+
+/* Landscape phones only: a 400px-tall screen cannot hold the heading block,
+   three cards, the resume strip and the ticker, so the supporting lines step
+   aside. Wider short windows (split-screen laptops) have the room — there the
+   full page stays, just tighter. */
+@media (max-height: 640px) and (orientation: landscape) and (max-width: 1000px) {
+  .contact-status,
   .cc-desc {
     display: none;
   }
+}
+
+/* Wide but short windows (a laptop with browser chrome, split screen, a
+   projector feed). Everything stays — status row, card copy, resume strip,
+   ticker — the vertical rhythm just tightens so the page never needs a
+   scroll. */
+@media (min-width: 1001px) and (max-height: 760px) {
+  .contact-inner {
+    padding-top: max(44px, calc(env(safe-area-inset-top) + 32px));
+    padding-bottom: 10px;
+  }
+
+  .contact-head {
+    margin-bottom: 12px;
+  }
+
+  .contact-eyebrow {
+    margin-bottom: 12px;
+  }
+
+  .contact-title {
+    margin-bottom: 10px;
+  }
+
+  .contact-status {
+    margin-top: 12px;
+    padding-top: 10px;
+  }
 
   .cv-strip {
-    padding: 12px 16px;
+    margin-top: 14px;
+  }
+
+  .contact-marquee {
+    padding: 12px 0;
   }
 }
 
