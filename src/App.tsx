@@ -436,6 +436,15 @@ export const App = () => {
         <div id="track" ref={trackRef}>
           <section id="hero" className="panel hero" aria-label="Portfolio">
             <h1 className="sr">Rahuldev Muthamsetty — Portfolio</h1>
+
+            <div className="hero-top">
+              <img className="hero-logo" src="/r-mark.png" alt="" />
+              <span className="hero-name">Rahul Dev</span>
+              <span aria-hidden="true" />
+            </div>
+
+            <span className="hero-copy">&copy; 2026</span>
+
             <svg viewBox="0 0 1000 104" aria-hidden="true">
               <text
                 x="0"
