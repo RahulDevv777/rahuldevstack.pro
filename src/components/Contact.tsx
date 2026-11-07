@@ -3,7 +3,7 @@ import type { CSSProperties } from 'react';
 import { ArrowUpRight, Check, Copy, Download, FileText, Mail } from 'lucide-react';
 import { education, profile } from '../data/content';
 
-const CV_URL = '/Rahuldev_Muthamsetty_Resume.pdf';
+const CV_URL = `${import.meta.env.BASE_URL}Rahuldev_Muthamsetty_Resume.pdf`;
 const CV_NAME = CV_URL.split('/').pop() ?? 'Rahuldev_Muthamsetty_Resume.pdf';
 const CV_META = 'PDF · 82 KB · two pages';
 

@@ -471,7 +471,11 @@ export const App = () => {
           <section id="hero" className="panel hero" aria-label="Portfolio">
             <h1 className="sr">Rahuldev Muthamsetty — Portfolio</h1>
 
-            <img className="hero-logo" src="/r-mark.png" alt="" />
+            <img
+              className="hero-logo"
+              src={`${import.meta.env.BASE_URL}r-mark.png`}
+              alt=""
+            />
 
             <div className="hero-foot">
               <span className="hero-name">Rahul Dev</span>

@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Source art and local build output kept out of the repo
+favicon 2.png

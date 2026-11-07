@@ -1,32 +1,104 @@
-# React + TypeScript + Vite
+# rahuldevstack.pro
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+The personal portfolio of **Rahuldev Muthamsetty** — a four-screen, motion-led
+site: a giant hero wordmark, a scrollable section list, a 3D ring of project
+cards, and a contact page.
 
-Currently, two official plugins are available:
+Live: <https://rahuldevv777.github.io/rahuldevstack.pro/>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Stack
 
-## React Compiler
+- Vite + React 19 + TypeScript
+- One stylesheet (`src/index.css`), Archivo Variable (via `@fontsource-variable`)
+- `lucide-react` icons, hand-drawn SVG glyphs
+- No router, no state library — a single rAF ticker drives every animation
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Structure
 
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```
+src/
+  App.tsx                 four-page vertical track, wheel/touch/key gesture engine,
+                          page lock, hash routing, detail state
+  components/
+    Menu.tsx              section headings, caption + teaser, exit only at the ends
+    RingPage.tsx          51-card 3D ring: drag, sideways wheel, arrow keys, dialog
+    Detail.tsx            About / Projects / Education / Skills overlay with a
+                          shared-element heading and virtual scrolling
+    DetailContent.tsx     the copy for those four pages
+    Contact.tsx           contact page + floating nav
+    AssetIcon.tsx         icon set used on the ring cards
+    FitHeading.tsx        heading that always fits the column
+  data/
+    cv.json               single source of truth for all content
+    cv.ts                 typed accessors over cv.json
+    content.ts            menu + page content views
+    assets.ts             ring card data and colours
+  hooks/
+    useVirtualScroll.ts   inertial content column, overscroll closes the page
+    useReducedMotion.ts   respects prefers-reduced-motion
+  lib/
+    ticker.ts             one requestAnimationFrame loop for the whole site
+    motion.ts             easings, clamp, damp
+  index.css               every style on the site
+public/                   resume PDF, favicon, hero mark, robots.txt
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Local development
+
+```bash
+npm install
+npm run dev      # http://localhost:5173
+npm run build    # type-check + production build into dist/
+npm run preview  # serve the built site
+npm run lint
+```
+
+## Routes
+
+Hash-based, so they work on any static host:
+
+| URL          | Screen                        |
+| ------------ | ----------------------------- |
+| `/`          | hero (PORTFOLIO)              |
+| `/#menu`     | sections                      |
+| `/#assets`   | project ring                  |
+| `/#contact`  | contact                       |
+| `/#about` `/#projects` `/#education` `/#skills` | detail pages |
+
+## Deploying
+
+The build is fully static and uses relative asset paths, so it runs unchanged
+on GitHub Pages, Netlify, Vercel, Cloudflare Pages or plain shared hosting.
+
+### GitHub Pages
+
+```bash
+npm run build
+git subtree push --prefix dist origin gh-pages
+```
+
+Then set **Settings → Pages → Source** to the `gh-pages` branch (root).
+The site lands on `https://<user>.github.io/<repo>/`.
+
+To serve it from `rahuldevstack.pro`, add a `CNAME` file containing the domain
+to `public/`, point these DNS records at GitHub, and set the custom domain in
+**Settings → Pages**:
+
+```
+A     @   185.199.108.153
+A     @   185.199.109.153
+A     @   185.199.110.153
+A     @   185.199.111.153
+CNAME www <user>.github.io
+```
+
+### Netlify / Vercel / Cloudflare Pages
+
+Build command `npm run build`, output directory `dist`. No environment
+variables, no redirects needed.
+
+## Content
+
+Everything the site says lives in `src/data/cv.json` — profile, projects,
+education, skills and the ring cards. Edit that file, rebuild, and every screen
+follows.
