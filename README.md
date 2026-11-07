@@ -4,7 +4,7 @@ The personal portfolio of **Rahuldev Muthamsetty** — a four-screen, motion-led
 site: a giant hero wordmark, a scrollable section list, a 3D ring of project
 cards, and a contact page.
 
-Live: <https://rahuldevv777.github.io/rahuldevstack.pro/>
+Live: <https://rahuldevstack.pro> · mirror: <https://rahuldevv777.github.io/rahuldevstack.pro/>
 
 ## Stack
 
@@ -72,12 +72,20 @@ on Vercel, Netlify, Cloudflare Pages, GitHub Pages or plain shared hosting.
 
 ### Vercel (primary)
 
-The repo is connected to Vercel: every push to `main` builds and publishes.
+Live at <https://rahuldevstack.pro> — every push to `main` builds and publishes.
 
-- Framework preset: Vite (auto-detected)
+- Framework preset: Vite
 - Build command: `npm run build`
 - Output directory: `dist`
+- Install command: `npm ci`
 - Environment variables: none
+
+The apex domain is canonical; `www.rahuldevstack.pro` permanently redirects
+(308) to it. DNS is hosted at the registrar (Hostinger): `A @` → `216.198.79.1`
+and `64.29.17.1`, `CNAME www` → `319382d54ff7a7be.vercel-dns-017.com`. Certificates
+are issued automatically by Vercel.
+
+To roll back, open **Deployments** in Vercel and promote an earlier build.
 
 ### GitHub Pages (mirror)
 
