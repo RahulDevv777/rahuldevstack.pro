@@ -96,42 +96,43 @@ function playClick(strength: TickStrength): void {
   if (ctx.state !== 'running') return;
 
   const now = ctx.currentTime;
-  const level = strength === 'medium' ? 0.8 : 0.6;
+  const level = strength === 'medium' ? 0.62 : 0.5;
 
   if (!noise) {
-    const length = Math.ceil(ctx.sampleRate * 0.06);
+    const length = Math.ceil(ctx.sampleRate * 0.04);
     noise = ctx.createBuffer(1, length, ctx.sampleRate);
     const data = noise.getChannelData(0);
     for (let i = 0; i < length; i += 1) data[i] = Math.random() * 2 - 1;
   }
 
-  // The transient: a band-passed noise burst that reads as a plastic "tack".
-  // Tuned for a phone speaker, which has almost no bass — the energy sits
-  // where the driver is loudest.
-  const transient = ctx.createBufferSource();
-  transient.buffer = noise;
+  // The iOS picker tick is almost pure transient: dry, bright, about 10 ms,
+  // with no bass at all. The low thump in the previous version is exactly
+  // what made it read as a "thock" instead of a "tick".
+  const click = ctx.createBufferSource();
+  click.buffer = noise;
   const band = ctx.createBiquadFilter();
   band.type = 'bandpass';
-  band.frequency.value = 2_300;
-  band.Q.value = 0.8;
-  const transientGain = ctx.createGain();
-  transientGain.gain.setValueAtTime(level, now);
-  transientGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.03);
-  transient.connect(band).connect(transientGain).connect(ctx.destination);
-  transient.start(now);
-  transient.stop(now + 0.045);
+  band.frequency.value = 3_600;
+  band.Q.value = 1.4;
+  const clickGain = ctx.createGain();
+  clickGain.gain.setValueAtTime(level, now);
+  clickGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.013);
+  click.connect(band).connect(clickGain).connect(ctx.destination);
+  click.start(now);
+  click.stop(now + 0.02);
 
-  // The body: a short falling sine that gives the click a little weight.
-  const body = ctx.createOscillator();
-  body.type = 'triangle';
-  body.frequency.setValueAtTime(420, now);
-  body.frequency.exponentialRampToValueAtTime(180, now + 0.04);
-  const bodyGain = ctx.createGain();
-  bodyGain.gain.setValueAtTime(level * 0.45, now);
-  bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
-  body.connect(bodyGain).connect(ctx.destination);
-  body.start(now);
-  body.stop(now + 0.07);
+  // A short 2.4 kHz sine under the noise: it gives the detent a pitch to land
+  // on, which is what the system sound has instead of body.
+  const tone = ctx.createOscillator();
+  tone.type = 'sine';
+  tone.frequency.setValueAtTime(2_400, now);
+  tone.frequency.exponentialRampToValueAtTime(1_500, now + 0.012);
+  const toneGain = ctx.createGain();
+  toneGain.gain.setValueAtTime(level * 0.34, now);
+  toneGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.014);
+  tone.connect(toneGain).connect(ctx.destination);
+  tone.start(now);
+  tone.stop(now + 0.018);
 }
 
 /**
