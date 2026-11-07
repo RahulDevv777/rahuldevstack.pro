@@ -104,6 +104,14 @@ touch .no-autodeploy   # pause
 rm .no-autodeploy      # resume
 ```
 
+It is installed as a macOS login service (`~/Library/LaunchAgents/pro.rahuldevstack.autodeploy.plist`),
+so it starts with the Mac and restarts itself if it ever stops. To remove it:
+
+```bash
+launchctl bootout gui/$(id -u)/pro.rahuldevstack.autodeploy
+rm ~/Library/LaunchAgents/pro.rahuldevstack.autodeploy.plist
+```
+
 ### GitHub Pages (mirror)
 
 `npm run deploy` builds and publishes `dist/` to the `gh-pages` branch, served at
