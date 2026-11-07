@@ -72,13 +72,19 @@ on GitHub Pages, Netlify, Vercel, Cloudflare Pages or plain shared hosting.
 
 ### GitHub Pages
 
+The site is already published to the `gh-pages` branch and served at
+<https://rahuldevv777.github.io/rahuldevstack.pro/>.
+
+To publish an update:
+
 ```bash
-npm run build
-git subtree push --prefix dist origin gh-pages
+npm run deploy      # builds and force-pushes dist/ to gh-pages
 ```
 
-Then set **Settings → Pages → Source** to the `gh-pages` branch (root).
-The site lands on `https://<user>.github.io/<repo>/`.
+(`scripts/deploy.sh` builds, adds `.nojekyll`, commits `dist/` and pushes it.)
+
+Set **Settings → Pages → Source** to the `gh-pages` branch (root) once; after
+that every deploy is live in about a minute.
 
 To serve it from `rahuldevstack.pro`, add a `CNAME` file containing the domain
 to `public/`, point these DNS records at GitHub, and set the custom domain in
