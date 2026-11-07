@@ -19,6 +19,7 @@ export interface ProjectEntry {
   subtitle: string;
   tags: string;
   description: string;
+  highlights?: string[];
   realWorldValue?: string;
 }
 

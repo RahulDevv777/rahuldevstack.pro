@@ -41,15 +41,17 @@ const Group = ({
   label,
   children,
   base = 0,
+  major = false,
 }: {
   label: string;
   children: ReactNode;
   base?: number;
+  major?: boolean;
 }) => {
   const items = Children.toArray(children);
   return (
     <section
-      className="d-group"
+      className={`d-group ${major ? 'd-group--major' : ''}`}
       data-detail-group
       style={{ '--base': base } as CSSProperties}
     >
@@ -74,18 +76,31 @@ const Entry = ({
   meta,
   body,
   note,
+  points,
+  emphasis = false,
 }: {
   title: string;
   meta: string;
   body: string;
   note?: string;
+  points?: string[];
+  emphasis?: boolean;
 }) => (
-  <div className="d-entry">
-    <MaskLine className="d-sub" as="h3">
+  <div className={`d-entry ${emphasis ? 'd-entry--major' : ''}`}>
+    <MaskLine className={`d-sub ${emphasis ? 'd-sub--lg' : ''}`} as="h3">
       {title}
     </MaskLine>
     <MaskLine className="d-meta">{meta}</MaskLine>
     <MaskLine className="d-body">{body}</MaskLine>
+    {points && points.length > 0 ? (
+      <MaskBlock className="d-points">
+        <ul>
+          {points.map((point) => (
+            <li key={point}>{point}</li>
+          ))}
+        </ul>
+      </MaskBlock>
+    ) : null}
     {note ? (
       <MaskLine className="d-body d-note">
         <span className="d-note-label">Real-world value</span> {note}
@@ -174,14 +189,16 @@ export const ProjectsContent = () => (
       ))}
     </Group>
 
-    <Group label="Final-year projects">
+    <Group label="B.Tech final-year projects" major>
       {finalYearProjects.map((project) => (
         <Entry
           key={project.title}
           title={project.title}
           meta={project.tags}
           body={project.description}
+          points={project.highlights}
           note={project.realWorldValue}
+          emphasis
         />
       ))}
     </Group>
