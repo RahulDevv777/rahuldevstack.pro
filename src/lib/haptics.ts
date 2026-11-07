@@ -21,7 +21,7 @@
 export type TickStrength = 'light' | 'medium';
 
 /** Shortest gap between two ticks. Below this a flick just sounds like noise. */
-const GAP_MS = 26;
+const GAP_MS = 40;
 const STORAGE_KEY = 'rd:haptics';
 
 let enabled = true;
@@ -88,10 +88,15 @@ if (typeof window !== 'undefined') {
 
 function playClick(strength: TickStrength): void {
   const ctx = audioContext();
-  if (!ctx || ctx.state !== 'running') return;
+  if (!ctx) return;
+
+  // Safari can leave the context suspended for the first few gestures; ask
+  // again on every tick so the sound starts as soon as it is allowed to.
+  if (ctx.state === 'suspended') void ctx.resume();
+  if (ctx.state !== 'running') return;
 
   const now = ctx.currentTime;
-  const level = strength === 'medium' ? 0.075 : 0.05;
+  const level = strength === 'medium' ? 0.32 : 0.24;
 
   if (!noise) {
     const length = Math.ceil(ctx.sampleRate * 0.06);
@@ -101,30 +106,32 @@ function playClick(strength: TickStrength): void {
   }
 
   // The transient: a band-passed noise burst that reads as a plastic "tack".
+  // Tuned for a phone speaker, which has almost no bass — the energy sits
+  // where the driver is loudest.
   const transient = ctx.createBufferSource();
   transient.buffer = noise;
   const band = ctx.createBiquadFilter();
   band.type = 'bandpass';
-  band.frequency.value = 1_900;
-  band.Q.value = 0.9;
+  band.frequency.value = 2_300;
+  band.Q.value = 0.8;
   const transientGain = ctx.createGain();
   transientGain.gain.setValueAtTime(level, now);
-  transientGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.028);
+  transientGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.03);
   transient.connect(band).connect(transientGain).connect(ctx.destination);
   transient.start(now);
-  transient.stop(now + 0.04);
+  transient.stop(now + 0.045);
 
   // The body: a short falling sine that gives the click a little weight.
   const body = ctx.createOscillator();
   body.type = 'triangle';
-  body.frequency.setValueAtTime(300, now);
-  body.frequency.exponentialRampToValueAtTime(150, now + 0.035);
+  body.frequency.setValueAtTime(420, now);
+  body.frequency.exponentialRampToValueAtTime(180, now + 0.04);
   const bodyGain = ctx.createGain();
-  bodyGain.gain.setValueAtTime(level * 0.5, now);
-  bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.045);
+  bodyGain.gain.setValueAtTime(level * 0.45, now);
+  bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
   body.connect(bodyGain).connect(ctx.destination);
   body.start(now);
-  body.stop(now + 0.06);
+  body.stop(now + 0.07);
 }
 
 /**
@@ -140,7 +147,9 @@ export function tick(strength: TickStrength = 'light'): void {
 
   if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
     try {
-      navigator.vibrate(strength === 'medium' ? 12 : 7);
+      // Android ignores anything much under 10 ms, so the light detent is
+      // still long enough to be felt through a case.
+      navigator.vibrate(strength === 'medium' ? 22 : 14);
     } catch {
       /* some browsers throw when the page is not visible */
     }
