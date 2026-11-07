@@ -87,6 +87,23 @@ are issued automatically by Vercel.
 
 To roll back, open **Deployments** in Vercel and promote an earlier build.
 
+### Automatic deploys from your Mac
+
+```bash
+npm run watch
+```
+
+Watches `src/`, `public/`, `scripts/`, `index.html` and the configs. After a
+save settles (8 s) it type-checks and builds; if the build passes it commits
+everything and pushes to `main`, and Vercel publishes about a minute later. If
+the build fails it commits nothing, so a half-finished edit never reaches the
+live site. Progress goes to `.auto-deploy.log`.
+
+```bash
+touch .no-autodeploy   # pause
+rm .no-autodeploy      # resume
+```
+
 ### GitHub Pages (mirror)
 
 `npm run deploy` builds and publishes `dist/` to the `gh-pages` branch, served at
