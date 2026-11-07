@@ -844,6 +844,69 @@ ol {
   margin-top: 28px;
 }
 
+/* Final-year project emphasis --------------------------------------------- */
+
+.d-group--major {
+  margin-top: clamp(36px, 7vh, 72px);
+}
+
+.d-group--major > .d-label {
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(17, 17, 17, 0.16);
+}
+
+.d-group--major > .d-label .d-line {
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+}
+
+.d-entry--major + .d-entry--major {
+  margin-top: 52px;
+}
+
+.d-sub--lg .d-line {
+  font-size: clamp(1.35rem, 2.2vw, 1.9rem);
+  line-height: 1.22;
+  letter-spacing: -0.025em;
+}
+
+.d-entry--major .d-body .d-line {
+  max-width: 64ch;
+}
+
+.d-points .d-line {
+  max-width: 62ch;
+  margin-top: 14px;
+}
+
+.d-points ul {
+  display: grid;
+  gap: 8px;
+  list-style: none;
+}
+
+.d-points li {
+  position: relative;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: clamp(12.5px, 0.98vw, 14.5px);
+  font-weight: 300;
+  line-height: 1.7;
+}
+
+.d-points li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.78em;
+  width: 6px;
+  height: 1px;
+  background: var(--ink);
+  opacity: 0.45;
+}
+
 .d-label .d-line {
   color: var(--label);
   font-size: 10px;
@@ -1049,6 +1112,14 @@ ol {
 
 .d-entry > .d-mask:nth-child(4) {
   --sub: 3;
+}
+
+.d-entry > .d-mask:nth-child(5) {
+  --sub: 4;
+}
+
+.d-entry > .d-mask:nth-child(6) {
+  --sub: 5;
 }
 
 .d-group.is-seen .d-line {
