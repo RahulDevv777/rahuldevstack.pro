@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "deploy": "bash scripts/deploy.sh"
+    "deploy": "bash scripts/deploy.sh",
+    "watch": "node scripts/auto-deploy.mjs"
   },
   "dependencies": {
     "@fontsource-variable/archivo": "^5.3.0",

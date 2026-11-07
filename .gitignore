@@ -29,3 +29,7 @@ favicon 2.png
 # Vercel project link (local only)
 .vercel
 .env*
+
+# auto-deploy watcher
+.auto-deploy.log
+.no-autodeploy
