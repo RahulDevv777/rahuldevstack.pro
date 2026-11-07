@@ -59,8 +59,8 @@ npm run lint
 Every step of a gesture lands with a tick, like an iOS picker snapping to the
 next value:
 
-| Where | Step |
-| --- | --- |
+| Where | Step | Strength |
+| --- | --- | --- |
 | All pages | moving between hero / menu / ring / contact | medium |
 | Menu (page 2) | each heading the wheel passes | light |
 | Ring (page 3) | each card the wheel, drag or arrow key passes | light |
