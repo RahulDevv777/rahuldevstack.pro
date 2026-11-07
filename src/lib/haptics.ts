@@ -148,9 +148,10 @@ export function tick(strength: TickStrength = 'light'): void {
 
   if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
     try {
-      // Android ignores anything much under 10 ms, so the light detent is
-      // still long enough to be felt through a case.
-      navigator.vibrate(strength === 'medium' ? 22 : 14);
+      // The iOS selection haptic is a single short impulse; Android has no
+      // amplitude control, so duration is the only way to make it read light
+      // instead of heavy. Under ~10 ms most Android motors do nothing at all.
+      navigator.vibrate(strength === 'medium' ? 20 : 12);
     } catch {
       /* some browsers throw when the page is not visible */
     }
