@@ -25,3 +25,7 @@ dist-ssr
 
 # Source art and local build output kept out of the repo
 favicon 2.png
+
+# Vercel project link (local only)
+.vercel
+.env*
