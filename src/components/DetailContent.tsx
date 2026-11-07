@@ -42,16 +42,20 @@ const Group = ({
   children,
   base = 0,
   major = false,
+  entry = false,
+  study = false,
 }: {
   label: string;
   children: ReactNode;
   base?: number;
   major?: boolean;
+  entry?: boolean;
+  study?: boolean;
 }) => {
   const items = Children.toArray(children);
   return (
     <section
-      className={`d-group ${major ? 'd-group--major' : ''}`}
+      className={`d-group ${major ? 'd-group--major' : ''} ${study ? 'd-group--study' : ''}`}
       data-detail-group
       style={{ '--base': base } as CSSProperties}
     >
@@ -60,7 +64,7 @@ const Group = ({
       </MaskLine>
       {items.map((child, i) => (
         <div
-          className="d-item"
+          className={`d-item ${entry ? 'd-item--entry' : ''}`}
           style={{ '--j': i + 1 } as CSSProperties}
           key={i}
         >
@@ -79,7 +83,6 @@ const Entry = ({
   points,
   emphasis = false,
   highlight = false,
-  spaced = false,
 }: {
   title: string;
   meta: string;
@@ -88,11 +91,8 @@ const Entry = ({
   points?: string[];
   emphasis?: boolean;
   highlight?: boolean;
-  spaced?: boolean;
 }) => (
-  <div
-    className={`d-entry ${emphasis ? 'd-entry--major' : ''} ${spaced ? 'd-entry--spaced' : ''}`}
-  >
+  <div className={`d-entry ${emphasis ? 'd-entry--major' : ''}`}>
     <MaskLine
       className={`d-sub ${emphasis ? 'd-sub--lg' : ''} ${highlight ? 'd-sub--mark' : ''}`}
       as="h3"
@@ -187,7 +187,7 @@ export const AboutContent = () => (
 
 export const ProjectsContent = () => (
   <>
-    <Group label="Featured technology projects" base={520}>
+    <Group label="Featured technology projects" base={520} entry>
       {featuredProjects.map((project) => (
         <Entry
           key={project.title}
@@ -198,7 +198,7 @@ export const ProjectsContent = () => (
       ))}
     </Group>
 
-    <Group label="B.Tech final-year projects" major>
+    <Group label="B.Tech final-year projects" major entry>
       {finalYearProjects.map((project) => (
         <Entry
           key={project.title}
@@ -216,7 +216,7 @@ export const ProjectsContent = () => (
 );
 
 export const EducationContent = () => (
-  <Group label="Education & accelerator" base={520}>
+  <Group label="Education & accelerator" base={520} entry study>
     {education.map((item) => (
       <Entry
         key={item.institution}
@@ -226,7 +226,6 @@ export const EducationContent = () => (
         points={item.highlights}
         emphasis
         highlight
-        spaced
       />
     ))}
   </Group>

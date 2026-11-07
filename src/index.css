@@ -841,16 +841,12 @@ ol {
 }
 
 /* Group wraps every child in .d-item, so entry spacing lives here. */
-.d-item:has(> .d-entry) + .d-item:has(> .d-entry) {
+.d-item--entry + .d-item--entry {
   margin-top: 40px;
 }
 
-.d-item:has(> .d-entry--major) + .d-item:has(> .d-entry--major) {
-  margin-top: 56px;
-}
-
 /* Education: a clear break between the two institutions. */
-.d-item:has(> .d-entry--spaced) + .d-item:has(> .d-entry--spaced) {
+.d-group--study .d-item--entry + .d-item--entry {
   margin-top: clamp(80px, 14vh, 150px);
 }
 
