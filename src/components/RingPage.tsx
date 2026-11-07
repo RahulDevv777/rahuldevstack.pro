@@ -17,6 +17,7 @@ import {
 import { AssetIcon } from './AssetIcon';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import { addTick } from '../lib/ticker';
+import { tick } from '../lib/haptics';
 import {
   clamp,
   cinematic,
@@ -260,6 +261,7 @@ export const RingPage = ({
 
   const [focusIndex, setFocusIndex] = useState(0);
   const focusIndexRef = useRef(0);
+  const tickIndexRef = useRef(0);
   const [expanded, setExpanded] = useState<number | null>(null);
   const [expandedClosing, setExpandedClosing] = useState(false);
 
@@ -456,6 +458,21 @@ export const RingPage = ({
       } else if (!drawnOnce.current) {
         renderRing(now);
         drawnOnce.current = true;
+      }
+
+      // Haptic detent: one tick per card the wheel passes. Gated on recent
+      // user input so the idle auto-advance never buzzes on its own.
+      if (
+        activeRef.current &&
+        !intro.current.active &&
+        expandedRef.current === null &&
+        now - lastInteraction.current < 600
+      ) {
+        const nearestCard = mod(Math.round(qDisplay.current), N);
+        if (nearestCard !== tickIndexRef.current) {
+          tickIndexRef.current = nearestCard;
+          tick('light');
+        }
       }
 
       const nextFocus = mod(Math.round(qDisplay.current), N);

@@ -8,6 +8,7 @@ import {
   type RefObject,
 } from 'react';
 import { MENU_SECTIONS, type MenuId } from '../data/content';
+import { tick } from '../lib/haptics';
 import { clamp, easeOut, prefersReducedMotion } from '../lib/motion';
 import { addTick } from '../lib/ticker';
 
@@ -107,6 +108,8 @@ export const Menu = ({
   const hoveredRef = useRef(-1);
   const needRenderRef = useRef(true);
   const hasScrolledRef = useRef(false);
+  const tickIndexRef = useRef(index);
+  const suppressTickUntilRef = useRef(0);
 
   const [activeIndex, setActiveIndex] = useState(index);
   const [settled, setSettled] = useState(true);
@@ -124,6 +127,11 @@ export const Menu = ({
     if (!active) {
       hasScrolledRef.current = false;
       setHasScrolled(false);
+    } else {
+      // Entering the page jumps the wheel to a heading; don't fire a burst of
+      // ticks for the headings it travels past on the way in.
+      suppressTickUntilRef.current = performance.now() + 400;
+      tickIndexRef.current = Math.round(pDisplayRef.current);
     }
   }, [active]);
 
@@ -228,6 +236,21 @@ export const Menu = ({
           pDisplayRef.current = tween.to;
           tweenRef.current = null;
           settle(tween.to);
+        }
+      }
+
+      // Haptic detent: one tick per heading the wheel passes, like an iOS
+      // picker landing on the next value. Driven off the continuous position
+      // rather than the settle callback so a fast flick ticks as it travels.
+      const nearest = Math.round(pDisplayRef.current);
+      if (nearest !== tickIndexRef.current) {
+        tickIndexRef.current = nearest;
+        if (
+          activeRef.current &&
+          !propsRef.current.dimmed &&
+          now > suppressTickUntilRef.current
+        ) {
+          tick('light');
         }
       }
 

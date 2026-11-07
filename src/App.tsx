@@ -10,6 +10,7 @@ import { Detail } from './components/Detail';
 import { Menu, type MenuApi } from './components/Menu';
 import { RingPage } from './components/RingPage';
 import type { MenuId } from './data/content';
+import { tick } from './lib/haptics';
 import { clamp, cinematic, prefersReducedMotion } from './lib/motion';
 import { addTick } from './lib/ticker';
 
@@ -133,6 +134,9 @@ export const App = () => {
 
       pageRef.current = target;
       setPage(target);
+      // A page step is a bigger move than a heading step, so it gets the
+      // heavier detent.
+      tick('medium');
 
       if (target === 1) {
         const requested = options.menuIndex ?? (from === 0 ? 0 : 4);
