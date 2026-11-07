@@ -18,7 +18,7 @@
  */
 
 import { spawnSync } from 'node:child_process';
-import { appendFileSync, existsSync, watch } from 'node:fs';
+import { appendFileSync, existsSync, statSync, watch } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -32,6 +32,7 @@ const BRANCH = 'main';
 const WATCHED = [
   'src',
   'public',
+  'scripts',
   'index.html',
   'package.json',
   'package-lock.json',
@@ -162,10 +163,13 @@ function schedule(reason) {
 const targets = WATCHED.filter((p) => existsSync(join(ROOT, p)));
 for (const target of targets) {
   const abs = join(ROOT, target);
+  const isDir = statSync(abs).isDirectory();
   try {
     watch(abs, { recursive: true }, (_event, filename) => {
-      if (!filename) return schedule(target);
-      const rel = relative(ROOT, join(abs, filename)).split('\\').join('/');
+      const rel = isDir
+        ? relative(ROOT, join(abs, filename ?? '')).split('\\').join('/')
+        : target;
+      if (!rel) return;
       if (IGNORED.some((rule) => rule.test(rel))) return;
       schedule(rel);
     });
