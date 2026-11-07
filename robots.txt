@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+# /portfolio is an alias of /cv; keep it crawlable but out of the index so the
+# two URLs do not compete as duplicates.
+Disallow: /portfolio
