@@ -68,40 +68,22 @@ Hash-based, so they work on any static host:
 ## Deploying
 
 The build is fully static and uses relative asset paths, so it runs unchanged
-on GitHub Pages, Netlify, Vercel, Cloudflare Pages or plain shared hosting.
+on Vercel, Netlify, Cloudflare Pages, GitHub Pages or plain shared hosting.
 
-### GitHub Pages
+### Vercel (primary)
 
-The site is already published to the `gh-pages` branch and served at
-<https://rahuldevv777.github.io/rahuldevstack.pro/>.
+The repo is connected to Vercel: every push to `main` builds and publishes.
 
-To publish an update:
+- Framework preset: Vite (auto-detected)
+- Build command: `npm run build`
+- Output directory: `dist`
+- Environment variables: none
 
-```bash
-npm run deploy      # builds and force-pushes dist/ to gh-pages
-```
+### GitHub Pages (mirror)
 
-(`scripts/deploy.sh` builds, adds `.nojekyll`, commits `dist/` and pushes it.)
-
-Set **Settings → Pages → Source** to the `gh-pages` branch (root) once; after
-that every deploy is live in about a minute.
-
-To serve it from `rahuldevstack.pro`, add a `CNAME` file containing the domain
-to `public/`, point these DNS records at GitHub, and set the custom domain in
-**Settings → Pages**:
-
-```
-A     @   185.199.108.153
-A     @   185.199.109.153
-A     @   185.199.110.153
-A     @   185.199.111.153
-CNAME www <user>.github.io
-```
-
-### Netlify / Vercel / Cloudflare Pages
-
-Build command `npm run build`, output directory `dist`. No environment
-variables, no redirects needed.
+`npm run deploy` builds and publishes `dist/` to the `gh-pages` branch, served at
+<https://rahuldevv777.github.io/rahuldevstack.pro/>. Useful as a spare copy; the
+canonical site is the domain on Vercel.
 
 ## Content
 
