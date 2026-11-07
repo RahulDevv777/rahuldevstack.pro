@@ -872,6 +872,20 @@ ol {
   letter-spacing: -0.025em;
 }
 
+/* Marker swipe behind a highlighted project title. */
+.d-sub--mark .d-line {
+  display: inline-block;
+  padding: 0.06em 0.18em;
+  margin-left: -0.18em;
+  background-image: linear-gradient(
+    180deg,
+    transparent 58%,
+    rgba(17, 17, 17, 0.13) 58%,
+    rgba(17, 17, 17, 0.13) 96%,
+    transparent 96%
+  );
+}
+
 .d-entry--major .d-body .d-line {
   max-width: 64ch;
 }
