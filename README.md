@@ -70,7 +70,8 @@ is deliberately silent.
 - `navigator.vibrate()` — the motor. Works on Android. **iOS Safari does not
   expose the Taptic Engine to web pages**, so on an iPhone the motor stays
   still no matter what the code does; that is an Apple restriction, not a bug.
-- A ~30 ms synthesised click through WebAudio — works everywhere, iPhone
+- A ~10 ms synthesised tick through WebAudio — a dry, bright transient with no
+  bass, modelled on the iOS picker's selection click. Works everywhere, iPhone
   included, and is the only feedback iOS can give a website.
 
 Sound starts only after a real touch, click or key press (browsers refuse to
