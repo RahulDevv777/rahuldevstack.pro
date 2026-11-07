@@ -840,12 +840,25 @@ ol {
   margin-top: 2px;
 }
 
-.d-entry + .d-entry {
-  margin-top: 28px;
+/* Group wraps every child in .d-item, so entry spacing lives here. */
+.d-item:has(> .d-entry) + .d-item:has(> .d-entry) {
+  margin-top: 40px;
+}
+
+.d-item:has(> .d-entry--major) + .d-item:has(> .d-entry--major) {
+  margin-top: 56px;
+}
+
+/* Education: a clear break between the two institutions. */
+.d-item:has(> .d-entry--spaced) + .d-item:has(> .d-entry--spaced) {
+  margin-top: clamp(80px, 14vh, 150px);
+}
+
+.d-label + .d-item {
+  margin-top: 10px;
 }
 
 /* Final-year project emphasis --------------------------------------------- */
-
 .d-group--major {
   margin-top: clamp(36px, 7vh, 72px);
 }
@@ -860,10 +873,6 @@ ol {
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.2em;
-}
-
-.d-entry--major + .d-entry--major {
-  margin-top: 52px;
 }
 
 .d-sub--lg .d-line {

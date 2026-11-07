@@ -79,6 +79,7 @@ const Entry = ({
   points,
   emphasis = false,
   highlight = false,
+  spaced = false,
 }: {
   title: string;
   meta: string;
@@ -87,8 +88,11 @@ const Entry = ({
   points?: string[];
   emphasis?: boolean;
   highlight?: boolean;
+  spaced?: boolean;
 }) => (
-  <div className={`d-entry ${emphasis ? 'd-entry--major' : ''}`}>
+  <div
+    className={`d-entry ${emphasis ? 'd-entry--major' : ''} ${spaced ? 'd-entry--spaced' : ''}`}
+  >
     <MaskLine
       className={`d-sub ${emphasis ? 'd-sub--lg' : ''} ${highlight ? 'd-sub--mark' : ''}`}
       as="h3"
@@ -219,6 +223,10 @@ export const EducationContent = () => (
         title={item.institution}
         meta={`${item.qualification} · ${item.meta}`}
         body={item.description}
+        points={item.highlights}
+        emphasis
+        highlight
+        spaced
       />
     ))}
   </Group>

@@ -29,6 +29,7 @@ export interface EducationEntry {
   meta: string;
   qualification: string;
   description: string;
+  highlights?: string[];
 }
 
 export interface SkillGroup {
