@@ -38,7 +38,6 @@ src/
     useReducedMotion.ts   respects prefers-reduced-motion
   lib/
     ticker.ts             one requestAnimationFrame loop for the whole site
-    haptics.ts            step feedback: vibration + a synthesised tick
     motion.ts             easings, clamp, damp
   index.css               every style on the site
 public/                   resume PDF, favicon, hero mark, robots.txt
@@ -52,35 +51,6 @@ npm run dev      # http://localhost:5173
 npm run build    # type-check + production build into dist/
 npm run preview  # serve the built site
 npm run lint
-```
-
-## Step feedback (haptics)
-
-The two wheel pages land each step with a tick, like an iOS picker snapping to
-the next value. Only the in-page scroll ticks — moving between the four screens
-is deliberately silent.
-
-| Where | Step |
-| --- | --- |
-| Menu (page 2) | each heading the wheel passes — light |
-| Ring (page 3) | each card the wheel, drag or arrow key passes — light |
-
-`src/lib/haptics.ts` fires two channels together:
-
-- `navigator.vibrate()` — the motor. Works on Android. **iOS Safari does not
-  expose the Taptic Engine to web pages**, so on an iPhone the motor stays
-  still no matter what the code does; that is an Apple restriction, not a bug.
-- A ~10 ms synthesised tick through WebAudio — a dry, bright transient with no
-  bass, modelled on the iOS picker's selection click. Works everywhere, iPhone
-  included, and is the only feedback iOS can give a website.
-
-Sound starts only after a real touch, click or key press (browsers refuse to
-start audio otherwise), every tick is throttled to at most one per 40 ms, and
-the ring's idle auto-advance is deliberately silent. On iPhone the silent
-switch also mutes web audio, so the tick needs ring mode off. To mute:
-
-```js
-localStorage.setItem('rd:haptics', 'off'); // then reload
 ```
 
 ## Routes
