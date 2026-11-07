@@ -96,7 +96,7 @@ function playClick(strength: TickStrength): void {
   if (ctx.state !== 'running') return;
 
   const now = ctx.currentTime;
-  const level = strength === 'medium' ? 0.32 : 0.24;
+  const level = strength === 'medium' ? 0.8 : 0.6;
 
   if (!noise) {
     const length = Math.ceil(ctx.sampleRate * 0.06);
