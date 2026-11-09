@@ -876,8 +876,6 @@ ol {
   letter-spacing: -0.025em;
 }
 
-/* Marker swipe behind a highlighted project title. */
-
 .d-entry--major .d-body .d-line {
   max-width: 64ch;
 }

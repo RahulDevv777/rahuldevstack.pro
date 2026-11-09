@@ -20,7 +20,6 @@ export interface ProjectEntry {
   tags: string;
   description: string;
   highlights?: string[];
-  highlight?: boolean;
   realWorldValue?: string;
 }
 
