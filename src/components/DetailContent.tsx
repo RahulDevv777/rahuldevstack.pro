@@ -82,7 +82,6 @@ const Entry = ({
   note,
   points,
   emphasis = false,
-  highlight = false,
 }: {
   title: string;
   meta: string;
@@ -90,13 +89,9 @@ const Entry = ({
   note?: string;
   points?: string[];
   emphasis?: boolean;
-  highlight?: boolean;
 }) => (
   <div className={`d-entry ${emphasis ? 'd-entry--major' : ''}`}>
-    <MaskLine
-      className={`d-sub ${emphasis ? 'd-sub--lg' : ''} ${highlight ? 'd-sub--mark' : ''}`}
-      as="h3"
-    >
+    <MaskLine className={`d-sub ${emphasis ? 'd-sub--lg' : ''}`} as="h3">
       {title}
     </MaskLine>
     <MaskLine className="d-meta">{meta}</MaskLine>
@@ -208,7 +203,6 @@ export const ProjectsContent = () => (
           points={project.highlights}
           note={project.realWorldValue}
           emphasis
-          highlight={project.highlight}
         />
       ))}
     </Group>
@@ -225,7 +219,6 @@ export const EducationContent = () => (
         body={item.description}
         points={item.highlights}
         emphasis
-        highlight
       />
     ))}
   </Group>
